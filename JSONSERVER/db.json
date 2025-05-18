@@ -9862,6 +9862,29 @@
         "catchPhrase": "Hello World!",
         "bs": "Welcome"
       }
+    },
+    {
+      "id": 12,
+      "username": "ori",
+      "website": "1234",
+      "name": "Ori Shoshana",
+      "email": "212.ori.212@gmail.com",
+      "phone": "0533833186",
+      "address": {
+        "street": "hadaf hayomi",
+        "suite": "609",
+        "city": "Jerusalem ",
+        "zipcode": "9727900",
+        "geo": {
+          "lat": "100",
+          "lng": "100"
+        }
+      },
+      "company": {
+        "name": "ori",
+        "catchPhrase": "the best place for you",
+        "bs": "innovative applications"
+      }
     }
   ]
 }

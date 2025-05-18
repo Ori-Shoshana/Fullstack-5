@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import styles from "../CSS/Todos.module.css";
+import styles from "../css/Todos.module.css";
 
 function TodoItem({ todo, onDelete, onToggleDone }) {
   const isPastDeadline = todo.deadline && new Date(todo.deadline) < new Date();
