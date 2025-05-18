@@ -1,35 +1,41 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React from 'react';
+import { Link, Routes, Route, useNavigate } from 'react-router-dom';
 
-function App() {
-  const [count, setCount] = useState(0)
+const App = () => {
+  const navigate = useNavigate();
+
+  const user = JSON.parse(localStorage.getItem('activeUser'));
+
+  if (!user) {
+    navigate('/login');
+    return null; // לא מציג כלום אם לא מחובר
+  }
+
+  const handleLogout = () => {
+    localStorage.removeItem('activeUser');
+    navigate('/login');
+  };
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-}
+    <div>
+      <h1>Welcome, {user.name}</h1>
 
-export default App
+      <nav>
+        <button onClick={() => navigate('info')}>Info</button>
+        <button onClick={() => navigate('todos')}>Todos</button>
+        <button onClick={() => navigate('posts')}>Posts</button>
+        <button onClick={() => navigate('albums')}>Albums</button>
+        <button onClick={handleLogout}>Logout</button>
+      </nav>
+
+      <Routes>
+        <Route path="info" element={<div>Info page (coming soon)</div>} />
+        <Route path="todos" element={<div>Todos page (coming soon)</div>} />
+        <Route path="posts" element={<div>Posts page (coming soon)</div>} />
+        <Route path="albums" element={<div>Albums page (coming soon)</div>} />
+      </Routes>
+    </div>
+  );
+};
+
+export default App;

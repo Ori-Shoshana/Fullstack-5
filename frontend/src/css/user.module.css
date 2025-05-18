@@ -1,0 +1,216 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap");
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Poppins", sans-serif;
+}
+
+body {
+    background-image: url('../Background_Blue.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    margin: 0;
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.wrapper {
+    width: 500px;
+    height: auto;
+    background: transparent;
+    border: 2px solid rgba(255, 255, 255, .2);
+    backdrop-filter: blur(65px);
+    box-shadow: 0 0 10px rgba(0, 0, 0, .2);
+    color: #FFF;
+    border-radius: 10px;
+    padding: 30px 40px;
+    max-height: 90vh;
+    overflow-y: auto;
+    padding-right: 15px; 
+}
+
+.wrapper::-webkit-scrollbar {
+    width: 8px;
+}
+
+.wrapper::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 4px;
+}
+
+.wrapper h1 {
+    font-size: 36px;
+    text-align: center;
+}
+
+.wrapper .inputBox {
+    position: relative;
+    width: 100%;
+    height: 50px;
+    margin: 30px 0;
+}
+
+.inputBox input {
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    border: none;
+    outline: none;
+    border: 2px solid rgba(255, 255, 255, 2);
+    border-radius: 40px;
+    font-size: 16px;
+    color: white;
+    padding: 20px 45px 20px 20px;
+}
+
+.inputBox input::placeholder {
+    color: #FFF;
+}
+
+.inputBox i {
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 20px;
+}
+
+.wrapper .btn {
+    width: 100%;
+    height: 45px;
+    background: white;
+    border: none;
+    outline: none;
+    border-radius: 40px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    font-size: 16px;
+    color: #333;
+    font-weight: 600;
+    transition: background-color 0.3s ease;
+    margin-bottom: 20px;
+    margin-top: 30px;
+}
+
+
+.btn:hover {
+    background-color: #e4dcf1;
+}
+
+.wrapper .link {
+    font-size: 14.5px;
+    text-align: center;
+}
+
+a {
+    color: #fff;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.link p a:hover {
+    text-decoration: underline;
+}
+
+.inputBox textarea {
+    width: 100%;
+    height: 100px;
+    background: transparent;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+    color: white;
+    padding: 10px 15px;
+    font-size: 16px;
+    resize: none;
+    /* Prevent resizing by the user */
+    outline: none;
+    /* Remove outline on focus */
+}
+
+
+.inputBox input {
+    width: 100%;
+    height: 50px;
+    background: transparent;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+    font-size: 16px;
+    color: white;
+    padding: 15px;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+/* Custom arrow for the dropdown */
+.inputBox {
+    position: relative;
+}
+
+.backButton {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    text-decoration: none;
+    color: white;
+    font-size: 12px;
+    font-weight: 500;
+    background: rgba(255, 255, 255, 0.2);
+    padding: 5px 10px;
+    border: 1px solid white;
+    border-radius: 15px;
+    transition: all 0.3s ease-in-out;
+}
+
+.backButton:hover {
+    background: white;
+    color: black;
+    transform: scale(1.05);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Mobile Media Query */
+@media screen and (max-width: 650px) {
+    .wrapper {
+        width: 85%;
+        height: auto;
+        padding: 20px;
+        backdrop-filter: blur(55px);
+    }
+
+    .wrapper h1 {
+        font-size: 28px;
+    }
+
+    .inputBox input {
+        font-size: 14px;
+        padding: 15px 35px 15px 15px;
+    }
+
+    .btn {
+        height: 40px;
+        font-size: 14px;
+    }
+
+    .backButton {
+        font-size: 10px;
+        padding: 4px 8px;
+    }
+
+
+}
+
+@media screen and (max-height: 565px) {
+    .wrapper {
+        height: 80%;
+        padding: 20px;
+        backdrop-filter: blur(55px);
+        overflow-y: auto;
+        /* Enable vertical scrolling within the wrapper */
+    }
+}
