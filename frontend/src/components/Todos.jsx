@@ -90,7 +90,7 @@ export default function TodoApp() {
   return (
     <div
       id="todo-wrapper"
-      className={`${styles.wrapper} ${styles["todo-active"]}`}
+      className={`${styles.wrapper} ${styles["todo-active"]} ${styles.body}`}
     >
       <h1>My To-Do List</h1>
 
@@ -104,13 +104,12 @@ export default function TodoApp() {
       value={searchQuery}
       onChange={(e) => setSearchQuery(e.target.value)}
     />
+    <button className={styles.btn} type="button">Search</button>
   </div>
-  <button className={styles.btn} type="button">Search</button>
+  
 </div>
-
-
-        {/* Add Section */}
-        <div id="todo-container" className={styles["todo-container"]}>
+      {/* Add Section */}
+      <div id="todo-container" className={styles["todo-container"]}>
         <div className={styles["input-box"]}>
             <input
             type="text"
@@ -119,23 +118,23 @@ export default function TodoApp() {
             value={text}
             onChange={(e) => setText(e.target.value)}
             />
-        </div>
-        <div className={styles["input-box"]} style={{ maxWidth: "200px" }}>
+            
             <input
             type="date"
             value={deadline}
             onChange={(e) => setDeadline(e.target.value)}
             title="Deadline (optional)"
-            style={{ padding: "12px 15px", fontSize: "16px", borderRadius: "40px", border: "2px solid rgba(255, 255, 255, 0.5)" }}
             />
+            <button className={styles.btn} onClick={addTodo} type="button">
+                Add Task
+            </button>
         </div>
-        <button className={styles.btn} onClick={addTodo} type="button">
-            Add Task
-        </button>
-        </div>
+        
+        
+      </div>
 
       {/* Task List */}
-      <div id="todoListContainer">
+      <div id="todoListContainer" className={styles.todoListContainer}>
         <div id="todoList">
           {filteredTodos.length === 0 && <p>No matching tasks found.</p>}
           {filteredTodos.map((todo) => (
