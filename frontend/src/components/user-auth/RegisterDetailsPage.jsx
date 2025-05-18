@@ -4,7 +4,6 @@ import styles from '../../css/user.module.css';
 
 const RegisterDetailsPage = () => {
   const [formData, setFormData] = useState({
-    id: '',
     name: '',
     email: '',
     phone: '',
@@ -37,81 +36,68 @@ const RegisterDetailsPage = () => {
     }));
   };
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  const authData = JSON.parse(localStorage.getItem('newUserAuth'));
-  const userId = formData.id;
+    const authData = JSON.parse(localStorage.getItem('newUserAuth'));
 
-  if (!userId) {
-    alert("ID is required.");
-    return;
-  }
+    try {
+      // קבלת כל המשתמשים כדי לחשב ID חדש
+      const usersRes = await fetch('http://localhost:3000/users');
+      const users = await usersRes.json();
 
-  try {
-    // בדיקת קיום ID קיים בשרת
-    const idCheckRes = await fetch(`http://localhost:3000/users?id=${userId}`);
-    const existingId = await idCheckRes.json();
+      const ids = users.map(u => parseInt(u.id)).filter(id => !isNaN(id));
+      const newId = ids.length > 0 ? Math.max(...ids) + 1 : 1;
 
-    if (existingId.length > 0) {
-      alert("This ID is already taken. Please choose a different one.");
-      return;
-    }
-
-    const fullUser = {
-      id: userId,
-      username: authData.username,
-      website: authData.password,
-      name: formData.name,
-      email: formData.email,
-      phone: formData.phone,
-      address: {
-        street: formData.street,
-        suite: formData.suite,
-        city: formData.city,
-        zipcode: formData.zipcode,
-        geo: {
-          lat: formData.lat,
-          lng: formData.lng
+      const fullUser = {
+        id: newId,
+        username: authData.username,
+        website: authData.password,
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        address: {
+          street: formData.street,
+          suite: formData.suite,
+          city: formData.city,
+          zipcode: formData.zipcode,
+          geo: {
+            lat: formData.lat,
+            lng: formData.lng
+          }
+        },
+        company: {
+          name: formData.companyName,
+          catchPhrase: formData.catchPhrase,
+          bs: formData.bs
         }
-      },
-      company: {
-        name: formData.companyName,
-        catchPhrase: formData.catchPhrase,
-        bs: formData.bs
+      };
+
+      const res = await fetch('http://localhost:3000/users', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(fullUser)
+      });
+
+      if (!res.ok) {
+        throw new Error('Failed to save user');
       }
-    };
 
-    const res = await fetch('http://localhost:3000/users', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(fullUser)
-    });
+      const savedUser = await res.json();
+      localStorage.setItem('activeUser', JSON.stringify(savedUser));
+      localStorage.removeItem('newUserAuth');
+      navigate('/home');
 
-    if (!res.ok) {
-      throw new Error('Failed to save user');
+    } catch (error) {
+      console.error('Registration failed:', error);
+      alert('Error during registration. Please try again.');
     }
-
-    const savedUser = await res.json();
-    localStorage.setItem('activeUser', JSON.stringify(savedUser));
-    localStorage.removeItem('newUserAuth');
-    navigate('/home');
-
-  } catch (error) {
-    console.error('Registration failed:', error);
-    alert('Error during registration. Please try again.');
-  }
-};
-
+  };
 
   return (
     <div className={styles.wrapper}>
       <form onSubmit={handleSubmit}>
         <h1>Complete Registration</h1>
-
-        <div className={styles.inputBox}>
-          <input name="id" placeholder="User ID (must be unique)" required onChange={handleChange} />
-        </div>
 
         <div className={styles.inputBox}>
           <input name="name" placeholder="Full Name" required onChange={handleChange} />
