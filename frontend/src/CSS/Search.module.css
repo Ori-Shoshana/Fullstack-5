@@ -1,0 +1,33 @@
+/* Search.module.css */
+
+.searchControls {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.select {
+  padding: 10px;
+  font-size: 14px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  background-color: white;
+  color: #333;
+}
+
+.input {
+  padding: 10px;
+  font-size: 14px;
+  width: 200px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  outline: none;
+  transition: border-color 0.3s ease;
+}
+
+.input:focus {
+  border-color: #6666ff;
+  box-shadow: 0 0 5px rgba(102, 102, 255, 0.4);
+}
