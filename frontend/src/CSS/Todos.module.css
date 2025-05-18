@@ -30,8 +30,8 @@ body{
     padding: 30px 40px;
     text-align: center;
     transition: width 0.3s ease;
-    max-height: 800px;  
-    overflow-y: auto; 
+    max-height: 600px;
+    overflow-y: auto;
 }
 
 /* Wider wrapper for To-Do page */
@@ -45,6 +45,7 @@ body{
     font-size: 36px;
     text-align: center;
     color: #681212;
+    margin-bottom: 80px;
 }
 
 .input-box input {
@@ -104,7 +105,6 @@ body{
 /* Scrollable Container for Task List */
 #todoListContainer {
     max-height: 400px; 
-    overflow-y: auto; 
 }
 
 #todoList {
@@ -134,10 +134,10 @@ body{
 }
 
 .todo-text {
-    flex: 1; /* Allow the text to take up remaining space */
+    flex: 1; 
     white-space: nowrap; 
     overflow: hidden; 
-    text-overflow: ellipsis; /* Add "..." if text is too long */
+    text-overflow: ellipsis; 
     margin-right: 10px;
 }
 
@@ -243,3 +243,19 @@ textarea {
 }
 
 
+
+
+
+.header-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 40px; /* space between header and task list */
+    width: 100%;
+}
+
+.search-container,
+#todo-container {
+    justify-content: center;
+}

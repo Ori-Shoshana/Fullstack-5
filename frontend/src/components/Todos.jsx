@@ -88,65 +88,58 @@ export default function TodoApp() {
   );
 
   return (
-    <div
-      id="todo-wrapper"
-      className={`${styles.wrapper} ${styles["todo-active"]}`}
-    >
-      <h1>My To-Do List</h1>
+    <>
+  <div className={styles["header-container"]}>
+    <h1>My To-Do List</h1>
 
-           {/* Search Section */}
-<div id="search-container" className={styles["search-container"]}>
-  <div className={styles["input-box"]}>
-    <input
-      type="text"
-      id="searchTodo"
-      placeholder="Search tasks..."
-      value={searchQuery}
-      onChange={(e) => setSearchQuery(e.target.value)}
-    />
-    <button className={styles.btn} type="button">Search</button>
-  </div>
-  
-</div>
-      {/* Add Section */}
-      <div id="todo-container" className={styles["todo-container"]}>
-        <div className={styles["input-box"]}>
-            <input
-            type="text"
-            id="newTodo"
-            placeholder="Add a new task"
-            value={text}
-            onChange={(e) => setText(e.target.value)}
-            />
-            
-            <input
-            type="date"
-            value={deadline}
-            onChange={(e) => setDeadline(e.target.value)}
-            title="Deadline (optional)"
-            />
-            <button className={styles.btn} onClick={addTodo} type="button">
-                Add Task
-            </button>
-        </div>
-        
-        
-      </div>
-
-      {/* Task List */}
-      <div id="todoListContainer" className={styles.todoListContainer}>
-        <div id="todoList">
-          {filteredTodos.length === 0 && <p>No matching tasks found.</p>}
-          {filteredTodos.map((todo) => (
-            <TodoItem
-              key={todo.id}
-              todo={todo}
-              onDelete={deleteTodo}
-              onToggleDone={toggleDone}
-            />
-          ))}
-        </div>
+    <div id="search-container" className={styles["search-container"]}>
+      <div className={styles["input-box"]}>
+        <input
+          type="text"
+          id="searchTodo"
+          placeholder="Search tasks..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+        />
+        <button className={styles.btn} type="button">Search</button>
       </div>
     </div>
+
+    <div id="todo-container" className={styles["todo-container"]}>
+      <div className={styles["input-box"]}>
+        <input
+          type="text"
+          id="newTodo"
+          placeholder="Add a new task"
+          value={text}
+          onChange={(e) => setText(e.target.value)}
+        />
+        <button className={styles.btn} onClick={addTodo} type="button">
+          Add Task
+        </button>
+      </div>  
+    </div>
+  </div>
+
+  <div
+    id="todo-wrapper"
+    className={`${styles.wrapper} ${styles["todo-active"]}`}
+  >
+    <div id="todoListContainer" className={styles.todoListContainer}>
+      <div id="todoList">
+        {filteredTodos.length === 0 && <p>No matching tasks found.</p>}
+        {filteredTodos.map((todo) => (
+          <TodoItem
+            key={todo.id}
+            todo={todo}
+            onDelete={deleteTodo}
+            onToggleDone={toggleDone}
+          />
+        ))}
+      </div>
+    </div>
+  </div>
+</>
+
   );
 }
