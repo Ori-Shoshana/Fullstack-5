@@ -90,7 +90,7 @@ export default function TodoApp() {
   return (
     <div
       id="todo-wrapper"
-      className={`${styles.wrapper} ${styles["todo-active"]} ${styles.body}`}
+      className={`${styles.wrapper} ${styles["todo-active"]}`}
     >
       <h1>My To-Do List</h1>
 
