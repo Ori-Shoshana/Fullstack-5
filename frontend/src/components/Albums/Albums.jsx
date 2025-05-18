@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import styles from '../../css/Albums.module.css';
 
 export default function Albums() {
@@ -16,9 +17,9 @@ export default function Albums() {
       return;
     }
 
-    fetch(`http://localhost:3000/albums?userId=${user.id}`)
-      .then((res) => res.json())
-      .then((data) => setAlbums(data))
+    axios
+      .get(`http://localhost:3000/albums?userId=${user.id}`)
+      .then((res) => setAlbums(res.data))
       .catch((err) => {
         console.error('Failed to load albums:', err);
         alert('Error loading albums');

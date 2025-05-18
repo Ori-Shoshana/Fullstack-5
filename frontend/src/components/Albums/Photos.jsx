@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import styles from '../../css/Photos.module.css'; // ודא שהנתיב תואם למיקום הקובץ שלך
 
 export default function PhotosPage() {
   const { albumId } = useParams();
@@ -8,9 +10,9 @@ export default function PhotosPage() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch(`http://localhost:3000/photos?albumId=${albumId}`)
-      .then((res) => res.json())
-      .then((data) => setPhotos(data))
+    axios
+      .get(`http://localhost:3000/photos?albumId=${albumId}`)
+      .then((res) => setPhotos(res.data))
       .catch((err) => {
         console.error('Failed to load photos:', err);
         alert('Error loading photos');
@@ -22,27 +24,28 @@ export default function PhotosPage() {
   };
 
   return (
-    <div style={{ padding: '2rem' }}>
-      <button onClick={() => navigate(-1)} style={{ marginBottom: '1rem' }}>
+    <div className={styles.wrapper}>
+      <button onClick={() => navigate(-1)} className={styles.backButton}>
         ← Back to Albums
       </button>
-      <h2>Photos from Album {albumId}</h2>
 
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '20px' }}>
+      <h2 className={styles.title}>Photos from Album {albumId}</h2>
+
+      <div className={styles.grid}>
         {photos.slice(0, visibleCount).map((photo) => (
-          <div key={photo.id} style={{ width: '200px', textAlign: 'center' }}>
+          <div key={photo.id} className={styles.card}>
             <img
               src={photo.url || photo.thumbnailUrl}
               alt={photo.title}
-              style={{ width: '100%', borderRadius: '8px' }}
+              className={styles.image}
             />
-            <p style={{ fontSize: '14px', marginTop: '5px' }}>{photo.title}</p>
+            <p className={styles.caption}>{photo.title}</p>
           </div>
         ))}
       </div>
 
       {visibleCount < photos.length && (
-        <button onClick={handleLoadMore} style={{ marginTop: '2rem' }}>
+        <button className={styles.loadMore} onClick={handleLoadMore}>
           Load More Photos
         </button>
       )}
