@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import Search from '../Search';
+import Search from '../../components/Search';
 import styles from '../../css/Posts.module.css';
 
 export default function Posts() {

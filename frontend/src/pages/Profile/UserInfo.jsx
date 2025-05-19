@@ -1,5 +1,5 @@
 import React from 'react';
-import styles from '../css/UserInfo.module.css'; 
+import styles from '../../css/UserInfo.module.css'; 
 
 export default function UserInfo({ user, onClose }) {
   if (!user) return null;

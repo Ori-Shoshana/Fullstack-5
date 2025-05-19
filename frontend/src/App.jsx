@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { Routes, Route, useNavigate } from 'react-router-dom';
-import Todos from './components/Todos/Todos.jsx';
-import Albums from './components/Albums/Albums.jsx';
-import Photos from './components/Albums/Photos.jsx';
-import Posts from './components/Posts/Posts.jsx';
-import Comments from './components/Posts/Comments.jsx';
-import UserInfo from './components/UserInfo.jsx'; // ייבוא חדש
+import Todos from './pages/Todos/Todos.jsx';
+import Albums from './pages/Albums/Albums.jsx';
+import Photos from './pages/Albums/Photos.jsx';
+import Posts from './pages/Posts/Posts.jsx';
+import Comments from './pages/Posts/Comments.jsx';
+import UserInfo from './pages/Profile/UserInfo.jsx';
 import styles from './css/MainPage.module.css';
 
 const MainPage = ({ user, navigate, handleLogout, toggleInfo }) => (

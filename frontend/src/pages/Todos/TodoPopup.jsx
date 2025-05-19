@@ -3,20 +3,20 @@ import PropTypes from "prop-types";
 import styles from "../../css/Todos.module.css";
 
 export default function TodoPopup({ todo, onClose, onSave }) {
-  const [editedText, setEditedText] = useState("");
+  const [editedTitle, setEditedTitle] = useState("");
 
   useEffect(() => {
     if (todo) {
-      setEditedText(todo.text);
+      setEditedTitle(todo.title);
     }
   }, [todo]);
 
   if (!todo) return null;
 
   const handleSave = () => {
-    const trimmedText = editedText.trim();
-    if (trimmedText && trimmedText !== todo.text) {
-      onSave(todo.id, trimmedText);
+    const trimmedTitle = editedTitle.trim();
+    if (trimmedTitle && trimmedTitle !== todo.title) {
+      onSave(todo.id, trimmedTitle);
     }
     onClose();
   };
@@ -27,8 +27,8 @@ export default function TodoPopup({ todo, onClose, onSave }) {
         <h2>Edit Task</h2>
         <input
           type="text"
-          value={editedText}
-          onChange={(e) => setEditedText(e.target.value)}
+          value={editedTitle}
+          onChange={(e) => setEditedTitle(e.target.value)}
           className={styles.input}
         />
         <div className={styles.buttons}>
@@ -42,8 +42,8 @@ export default function TodoPopup({ todo, onClose, onSave }) {
 
 TodoPopup.propTypes = {
   todo: PropTypes.shape({
-    id: PropTypes.number.isRequired,
-    text: PropTypes.string.isRequired,
+    id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+    title: PropTypes.string.isRequired,
   }),
   onClose: PropTypes.func.isRequired,
   onSave: PropTypes.func.isRequired,

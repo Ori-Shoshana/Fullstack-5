@@ -2,9 +2,9 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import App from './App.jsx'
-import Login from './components/user-auth/Login.jsx'
-import Registration from './components/user-auth/Registration.jsx'
-import RegisterDetailsPage from './components/user-auth/RegisterDetailsPage.jsx'
+import Login from './pages/Login/Login.jsx'
+import Registration from './pages/Signup/Registration.jsx'
+import RegisterDetailsPage from './pages/Signup/RegisterDetailsPage.jsx'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>

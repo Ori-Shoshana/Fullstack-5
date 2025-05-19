@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import Search from '../Search';
+import Search from '../../components/Search';
 import styles from '../../css/Albums.module.css';
 
 export default function Albums() {
