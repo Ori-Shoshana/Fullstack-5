@@ -2,7 +2,9 @@ import React from 'react';
 import { Routes, Route, useNavigate } from 'react-router-dom';
 import Todos from './components/Todos.jsx';
 import Albums from './components/Albums/Albums.jsx';
-import PhotosPage from './components/Albums/Photos.jsx';
+import Photos from './components/Albums/Photos.jsx';
+import Posts from './components/Posts/Posts.jsx';
+import Comments from './components/Posts/Comments.jsx';
 
 const MainPage = ({ user, navigate, handleLogout }) => (
   <div>
@@ -39,9 +41,10 @@ const App = () => {
       />
       <Route path="info" element={<div>Info page (coming soon)</div>} />
       <Route path="todos" element={<Todos />} />
-      <Route path="posts" element={<div>Posts page (coming soon)</div>} />
+      <Route path="posts" element={<Posts />} />
+      <Route path="posts/comments/:postId" element={<Comments />} />
       <Route path="albums" element={<Albums />} />
-      <Route path="albums/photos/:albumId" element={<PhotosPage />} />
+      <Route path="albums/photos/:albumId" element={<Photos />} />
     </Routes>
   );
 };

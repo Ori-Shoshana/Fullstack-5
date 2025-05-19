@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import styles from '../../css/Photos.module.css'; // ודא שקיים
 
-export default function PhotosPage() {
+export default function Photos() {
   const { albumId } = useParams();
   const navigate = useNavigate();
 

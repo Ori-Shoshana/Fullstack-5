@@ -6,6 +6,8 @@ import styles from '../../css/Albums.module.css';
 
 export default function Albums() {
   const [albums, setAlbums] = useState([]);
+  const [searchBy, setSearchBy] = useState('title');
+  const [searchQuery, setSearchQuery] = useState('');
   const navigate = useNavigate();
 
   const user = JSON.parse(localStorage.getItem('activeUser'));
@@ -31,8 +33,12 @@ export default function Albums() {
 
       <Search
         resource="albums"
-        setResults={setAlbums}
         userId={user.id}
+        setResults={setAlbums}
+        searchBy={searchBy}
+        setSearchBy={setSearchBy}
+        searchQuery={searchQuery}
+        setSearchQuery={setSearchQuery}
       />
 
       <ul className={styles.cardList}>
