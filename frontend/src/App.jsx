@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Routes, Route, useNavigate } from 'react-router-dom';
-import Todos from './components/Todos.jsx';
+import Todos from './components/Todos/Todos.jsx';
 import Albums from './components/Albums/Albums.jsx';
 import Photos from './components/Albums/Photos.jsx';
 import Posts from './components/Posts/Posts.jsx';

@@ -141,11 +141,7 @@ body{
     margin-right: 10px;
 }
 
-/* Style for tasks with a passed deadline */
-.past-deadline {
-    color: rgb(215, 3, 3) !important;
-    font-weight: bold;
-}
+
 
 .todo-item.completed {
     opacity: 0.6;
@@ -193,11 +189,16 @@ button.done:hover {
     justify-content: center;
     align-items: center;
     display: flex;
+    z-index: 999;
 }
 
-
+.noscroll {
+    overflow: hidden;
+  }
+  
 .popup-content {
-    background: white;
+    color: black; 
+    background-color: #FFF; 
     padding: 30px;
     border-radius: 15px;
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
@@ -209,6 +210,17 @@ button.done:hover {
 .popup-content .btn{
     color: #000;
 }
+
+.popup-content h2 {
+    margin-top: 0;
+    margin-bottom: 1rem; 
+    font-size: 1.8rem; 
+  }
+
+  .popup-content input {
+    font-size: 1.2rem; 
+    margin-bottom: 1.5rem; 
+  }
 
 textarea {
     resize: none;
@@ -222,15 +234,7 @@ textarea {
     box-sizing: border-box;
 }
 
-#editDeadline {
-    font-size: 18px;
-    padding: 10px;
-    width: 100%;
-    height: 45px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-    box-sizing: border-box;
-}
+
 
 
 #search-container,
