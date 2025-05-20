@@ -1,15 +1,18 @@
+// Albums.jsx
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Search from '../../components/Search';
 import styles from '../../css/Albums.module.css';
+import { create } from '../../api/crudService';
 
 export default function Albums() {
   const [albums, setAlbums] = useState([]);
   const [searchBy, setSearchBy] = useState('title');
   const [searchQuery, setSearchQuery] = useState('');
-  const navigate = useNavigate();
+  const [newTitle, setNewTitle] = useState('');
 
+  const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem('activeUser'));
 
   useEffect(() => {
@@ -27,9 +30,22 @@ export default function Albums() {
       });
   }, []);
 
+  const addAlbum = async () => {
+    if (newTitle.trim() === "") return;
+
+    const newAlbum = await create("albums", {
+      userId: user.id,
+      title: newTitle.trim(),
+    });
+
+    setAlbums((prev) => [...prev, newAlbum]);
+    setNewTitle("");
+  };
+
   return (
     <div className={styles.wrapper}>
       <h2 className={styles.title}>Your Albums</h2>
+
 
       <Search
         resource="albums"
@@ -40,6 +56,20 @@ export default function Albums() {
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
       />
+
+
+      <div className={styles.searchControls}>
+        <input
+          className={styles.input}
+          type="text"
+          placeholder="Enter new album title"
+          value={newTitle}
+          onChange={(e) => setNewTitle(e.target.value)}
+        />
+        <button className={styles.select} onClick={addAlbum}>
+          Add Album
+        </button>
+      </div>
 
       <ul className={styles.cardList}>
         {albums.length === 0 && (

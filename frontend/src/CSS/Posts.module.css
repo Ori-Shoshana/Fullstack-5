@@ -15,7 +15,14 @@
   list-style: none;
   padding: 0;
   margin-bottom: 2rem;
+
+  max-height: 300px; 
+  overflow-y: auto;
+
+  scrollbar-width: thin;
+  scrollbar-color: #ccc transparent;
 }
+
 
 .item {
   padding: 12px 16px;
@@ -78,4 +85,37 @@
 
 .selected button:hover {
   background-color: #add4f5;
+}
+.addContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  align-items: center;
+}
+
+.input {
+  width: 100%;
+  max-width: 600px;
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  resize: vertical; 
+  min-height: 40px;  
+  max-height: 100px; 
+}
+
+.addButton {
+  padding: 10px 16px;
+  background-color: #6666ff;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.addButton:hover {
+  background-color: #5555ee;
 }

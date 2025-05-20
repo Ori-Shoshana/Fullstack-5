@@ -50,3 +50,30 @@
   font-size: 15px;
   color: #444;
 }
+.input {
+  padding: 10px;
+  font-size: 16px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  resize: vertical;
+  min-height: 60px;
+  max-height: 100px; 
+}
+
+.commentHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.deleteButton {
+  background: none;
+  border: none;
+  font-size: 18px;
+  color: #cc0000;
+  cursor: pointer;
+}
+
+.deleteButton:hover {
+  color: #990000;
+}
