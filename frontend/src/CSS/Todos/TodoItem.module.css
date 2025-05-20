@@ -1,0 +1,49 @@
+.todo-text {
+    flex: 1; 
+    white-space: nowrap; 
+    overflow: hidden; 
+    text-overflow: ellipsis; 
+    margin-right: 10px;
+}
+
+
+
+.todo-item.completed {
+    opacity: 0.6;
+    text-decoration: line-through;
+}
+
+.circle {
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    border: 3px solid orange;
+    border-radius: 50%;
+    cursor: pointer;
+    margin-right: 12px;
+    vertical-align: middle;
+    transition: background-color 0.2s ease;
+}
+  
+.filled {
+    background-color: orange;
+}
+  
+.todo-item {
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    opacity: 1;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    color: black; 
+    background-color: #e4dbdbb5; 
+}
+
+.todo-item:hover {
+    transform: scale(1.02);
+}

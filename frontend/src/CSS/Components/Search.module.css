@@ -1,0 +1,31 @@
+.input-box input {
+    height: 60px; 
+    padding: 20px 40px;
+    border-radius: 40px;
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    font-size: 18px;
+    color: #681212;
+    background: transparent;
+    outline: none;
+  }
+
+.input-box input::placeholder {
+    color: #681212;
+}
+
+.searchControls {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 20px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  
+  .select {
+    padding: 10px;
+    font-size: 14px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    background-color: white;
+    color: #333;
+  }

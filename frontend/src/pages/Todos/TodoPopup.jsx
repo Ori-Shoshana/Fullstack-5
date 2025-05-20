@@ -1,8 +1,12 @@
 import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
-import styles from "../../css/Todos.module.css";
+import styles from "../../css/Todos/TodoPopup.module.css";
+import Delete from "../../components/buttons/Delete";
+import Save from "../../components/buttons/Save";
+import Cancel from "../../components/buttons/Cancel";
 
-export default function TodoPopup({ todo, onClose, onSave }) {
+export default function TodoPopup(props) {
+  const { todo, onClose, onSave, onDelete } = props;
   const [editedTitle, setEditedTitle] = useState("");
 
   useEffect(() => {
@@ -25,16 +29,14 @@ export default function TodoPopup({ todo, onClose, onSave }) {
     <div className={styles.popup}>
       <div className={styles["popup-content"]}>
         <h2>Edit Task</h2>
-        <input
+        <textarea
           type="text"
           value={editedTitle}
           onChange={(e) => setEditedTitle(e.target.value)}
-          className={styles.input}
         />
-        <div className={styles.buttons}>
-          <button className={styles.btn} onClick={handleSave}>Save</button>
-          <button className={styles.btn} onClick={onClose}>Cancel</button>
-        </div>
+          <Save onClick={handleSave} />
+          <Cancel onClick={onClose} />
+          <Delete onClick={() => {onDelete(todo.id); onClose();}} />
       </div>
     </div>
   );
@@ -47,4 +49,5 @@ TodoPopup.propTypes = {
   }),
   onClose: PropTypes.func.isRequired,
   onSave: PropTypes.func.isRequired,
+  onDelete: PropTypes.func.isRequired,
 };

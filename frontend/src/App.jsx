@@ -7,8 +7,11 @@ import Posts from './pages/Posts/Posts.jsx';
 import Comments from './pages/Posts/Comments.jsx';
 import UserInfo from './pages/Profile/UserInfo.jsx';
 import styles from './css/MainPage.module.css';
+import PropTypes from "prop-types";
 
-const MainPage = ({ user, navigate, handleLogout, toggleInfo }) => (
+const MainPage = (props) => {
+  const { user, navigate, handleLogout, toggleInfo } = props;
+  return (
   <div className={styles.container}>
     <h1 className={styles.welcome}>Welcome, {user.name}</h1>
 
@@ -20,7 +23,17 @@ const MainPage = ({ user, navigate, handleLogout, toggleInfo }) => (
       <button onClick={handleLogout}>Logout</button>
     </div>
   </div>
-);
+  );
+};
+
+MainPage.propTypes = {
+  user: PropTypes.shape({
+    name: PropTypes.string.isRequired,
+  }).isRequired,
+  navigate: PropTypes.func.isRequired,
+  handleLogout: PropTypes.func.isRequired,
+  toggleInfo: PropTypes.func.isRequired,
+};
 
 const App = () => {
   const navigate = useNavigate();

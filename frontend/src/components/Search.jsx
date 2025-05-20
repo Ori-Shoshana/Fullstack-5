@@ -1,41 +1,31 @@
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import axios from 'axios';
-import styles from '../css/Search.module.css';
+import styles from '../css/Components/Search.module.css';
 
-export default function Search({
-  resource,
-  setResults,
-  userId,
-  searchBy,
-  setSearchBy,
-  searchQuery,
-  setSearchQuery
-}) {
-  const handleSearch = () => {
+export default function Search(props) {
+  const { resource, setResults, userId, searchBy, setSearchBy, searchQuery, setSearchQuery, searchParams, onSearch, onClear } = props;
+
+  useEffect(() => {
+    if (!searchParams?.query) return;
+
     const baseUrl = `http://localhost:3000/${resource}`;
     let query = `?userId=${userId}`;
 
-    if (!searchQuery.trim()) {
-      alert('Please enter a search value');
-      return;
-    }
-
-    if (resource === 'todos' && searchBy === 'completed') {
-      query += `&completed=${searchQuery.trim()}`;
+    if (resource === 'todos' && searchParams.by === 'completed') {
+      query += `&completed=true`;
+      query += `&title=${searchParams.query}`;
+    } else if (searchParams.by === 'id') {
+      query += `&id=${searchParams.query}`;
     } else {
-      if (searchBy === 'id') {
-        query += `&id=${searchQuery.trim()}`;
-      } else {
-        query += `&${searchBy}=${searchQuery.trim()}`;
-      }
+      query += `&${searchParams.by}=${searchParams.query}`;
     }
 
     axios
       .get(baseUrl + query)
       .then((res) => setResults(res.data))
       .catch((err) => console.error('Search error:', err));
-  };
+  }, [searchParams, resource, userId, setResults]);
 
   return (
     <div className={styles.searchControls}>
@@ -57,8 +47,12 @@ export default function Search({
         onChange={(e) => setSearchQuery(e.target.value)}
       />
 
-      <button className={styles.searchButton} onClick={handleSearch}>
+      <button className={styles.searchButton} onClick={onSearch}>
         Search
+      </button>
+
+      <button className={styles.clearButton} onClick={onClear}>
+        Clear
       </button>
     </div>
   );
@@ -71,5 +65,11 @@ Search.propTypes = {
   searchBy: PropTypes.string.isRequired,
   setSearchBy: PropTypes.func.isRequired,
   searchQuery: PropTypes.string.isRequired,
-  setSearchQuery: PropTypes.func.isRequired
+  setSearchQuery: PropTypes.func.isRequired,
+  searchParams: PropTypes.shape({
+    query: PropTypes.string,
+    by: PropTypes.string
+  }).isRequired,
+  onSearch: PropTypes.func.isRequired,
+  onClear: PropTypes.func.isRequired
 };

@@ -1,20 +1,22 @@
 import React, { useState, useEffect, useCallback, useMemo } from "react";
-import styles from "../../css/Todos.module.css";
+import styles from "../../css/Todos/Todos.module.css";
 import TodoPopup from "./TodoPopup";
-import TodoItem from "./TodoItem";
+import TodoListDisplay from "./TodoListDisplay";
+import Search from "../../components/Search";
 import { getAll, create, update, remove } from "../../api/crudService";
 
-//I need to work on searchQuery, and check if its still neccesery here, in 70, etc...
 
-export default function TodoApp() {
+export default function Todos() {
+  const user = JSON.parse(localStorage.getItem('activeUser'));
   const [selectedTodo, setSelectedTodo] = useState(null);
   const [todos, setTodos] = useState([]);
   const [title, setTitle] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
-
+  const [searchBy, setSearchBy] = useState("title");
+  
   useEffect(() => {
     const fetchTodos = async () => {
-      const data = await getAll("todos");
+      const data = await getAll("todos", user.id);
       setTodos(data);
     };
     fetchTodos();
@@ -23,7 +25,7 @@ export default function TodoApp() {
   const addTodo = useCallback(async () => {
     if (title.trim() === "") return;
     const newTodo = await create("todos", {
-      userId: 1,
+      userId: user.id,
       title: title.trim(),
       completed: false,
     });
@@ -65,28 +67,44 @@ export default function TodoApp() {
     setSelectedTodo(null);
   }, []);
 
-  const filteredTodos = useMemo(() => {
-    return todos.filter((todo) =>
-      todo.title.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-  }, [todos, searchQuery]);
+  const [searchParams, setSearchParams] = useState(null);
 
+  const handleSearchClick = useCallback(() => {
+    if (!searchQuery.trim()) return;
+
+    setSearchParams({
+      query: searchQuery.trim(),
+      by: searchBy
+    });
+  }, [searchQuery, searchBy, todos]);
+
+  const handleClearSearch = useCallback(async () => {
+    setSearchQuery("");
+    setSearchBy("title");
+    const allTodos = await getAll("todos", user.id);
+    setTodos(allTodos);
+  }, []);
+  
+    
+  
   return (
     <>
       <div className={styles["header-container"]}>
         <h1>My To-Do List</h1>
 
-        <div className={styles["search-container"]}>
-          <div className={styles["input-box"]}>
-            <input
-              type="text"
-              placeholder="Search tasks..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-            <button className={styles.btn} type="button">Search</button>
-          </div>
-        </div>
+        <Search
+          resource="todos"
+          userId={user.id}
+          setResults={setTodos}
+          searchBy={searchBy}
+          setSearchBy={setSearchBy}
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+          searchParams={searchParams}
+          onSearch={handleSearchClick}
+          onClear={handleClearSearch}
+        />
+
 
         <div className={styles["todo-container"]}>
           <div className={styles["input-box"]}>
@@ -101,31 +119,21 @@ export default function TodoApp() {
         </div>
       </div>
 
-      <div className={`${styles.wrapper} ${styles["todo-active"]} ${selectedTodo ? styles.noscroll : ""}`}>
-        <div className={styles.todoListContainer}>
-          <div id="todoList">
-            {filteredTodos.length === 0 && <p>No matching tasks found.</p>}
-            {filteredTodos.map((todo) => (
-              <MemoizedTodoItem
-                key={todo.id}
-                todo={todo}
-                onDelete={deleteTodo}
-                onToggleDone={toggleDone}
-                onDoubleClick={handleDoubleClick}
-              />
-            ))}
-          </div>
-        </div>
-      </div>
+      <TodoListDisplay
+        todos={todos}
+        selectedTodo={selectedTodo}
+        onToggleDone={toggleDone}
+        onDoubleClick={handleDoubleClick}
+      />
+
 
       <TodoPopup
         todo={selectedTodo}
         onClose={closePopup}
-        onSave={updateTodoTitle}
+        onSave={updateTodoTitle}             
+        onDelete={deleteTodo}
       />
     </>
   );
 }
 
-//Only re-render TodoItem if its props actually changed
-const MemoizedTodoItem = React.memo(TodoItem);

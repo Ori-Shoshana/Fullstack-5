@@ -3,10 +3,10 @@ import axios from 'axios';
 const BASE_URL = 'http://localhost:3000';
 
 /**
- * Get all items of a resource (e.g., posts, albums).
+ * Get all the current user items of a resource (e.g., posts, albums).
  */
-export const getAll = async (resource) => {
-  const response = await axios.get(`${BASE_URL}/${resource}`);
+export const getAll = async (resource, id) => {
+  const response = await axios.get(`${BASE_URL}/${resource}/?userId=${id}`);
   return response.data;
 };
 
