@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Search from '../../components/Search';
 import { create, remove, update } from '../../api/crudService';
 import styles from '../../css/Posts.module.css';
-import PostPopup from './PostPopup'; // Import the PostPopup component
+import PostPopup from './PostPopup';
 
 export default function Posts() {
+  const { userId } = useParams();
+  const navigate = useNavigate();
+
   const [posts, setPosts] = useState([]);
   const [selectedPost, setSelectedPost] = useState(null);
   const [editingPost, setEditingPost] = useState(null);
@@ -16,29 +19,26 @@ export default function Posts() {
   const [newTitle, setNewTitle] = useState('');
   const [newBody, setNewBody] = useState('');
 
-  const navigate = useNavigate();
-  const user = JSON.parse(localStorage.getItem('activeUser'));
-
   useEffect(() => {
-    if (!user) {
+    if (!userId) {
       navigate('/login');
       return;
     }
 
     axios
-      .get(`http://localhost:3000/posts?userId=${user.id}`)
+      .get(`http://localhost:3000/posts?userId=${userId}`)
       .then((res) => setPosts(res.data))
       .catch((err) => {
         console.error('Failed to load posts:', err);
         alert('Error loading posts');
       });
-  }, []);
+  }, [userId]);
 
   const addPost = async () => {
     if (!newTitle.trim() || !newBody.trim()) return;
 
     const newPost = await create('posts', {
-      userId: user.id,
+      userId: parseInt(userId),
       title: newTitle.trim(),
       body: newBody.trim(),
     });
@@ -69,7 +69,7 @@ export default function Posts() {
       <Search
         resource="posts"
         setResults={setPosts}
-        userId={user.id}
+        userId={userId}
         searchBy={searchBy}
         setSearchBy={setSearchBy}
         searchQuery={searchQuery}
@@ -121,7 +121,7 @@ export default function Posts() {
         <div className={styles.selected}>
           <h3>{selectedPost.title}</h3>
           <p>{selectedPost.body}</p>
-          <button onClick={() => navigate(`comments/${selectedPost.id}`)}>
+          <button onClick={() => navigate(`users/${userId}/posts/${selectedPost.id}/comments`)}>
             Show Comments
           </button>
         </div>

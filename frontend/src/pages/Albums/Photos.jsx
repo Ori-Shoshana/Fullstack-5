@@ -6,7 +6,7 @@ import styles from '../../css/Photos.module.css';
 import PhotoPopup from './PhotoPopup';
 
 export default function Photos() {
-  const { albumId } = useParams();
+  const { albumId, userId } = useParams();
   const navigate = useNavigate();
 
   const [photos, setPhotos] = useState([]);
@@ -71,7 +71,7 @@ export default function Photos() {
 
   return (
     <div className={styles.wrapper}>
-      <button onClick={() => navigate(-1)} className={styles.backButton}>
+      <button onClick={() => navigate(`/users/${userId}/albums`)} className={styles.backButton}>
         ← Back to Albums
       </button>
 
@@ -93,7 +93,7 @@ export default function Photos() {
             <button
               className={styles.deleteButton}
               onClick={(e) => {
-                e.stopPropagation(); // למנוע פתיחת popup במחיקה
+                e.stopPropagation();
                 deletePhoto(photo.id);
               }}
               title="Delete photo"
@@ -104,7 +104,6 @@ export default function Photos() {
         ))}
       </div>
 
-      {/* הוספת תמונה */}
       <div className={styles.addPhotoContainer}>
         <input
           className={styles.input}

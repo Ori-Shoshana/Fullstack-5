@@ -6,8 +6,9 @@ import styles from '../../css/Comments.module.css';
 import CommentPopup from './CommentPopup';
 
 export default function Comments() {
-  const { postId } = useParams();
+  const { userId, postId } = useParams();
   const navigate = useNavigate();
+
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState("");
   const [editingComment, setEditingComment] = useState(null);
@@ -52,7 +53,7 @@ export default function Comments() {
 
   return (
     <div className={styles.wrapper}>
-      <button onClick={() => navigate(-1)} className={styles.backButton}>
+      <button onClick={() => navigate(`/users/${userId}/posts`)} className={styles.backButton}>
         ← Back to Post
       </button>
 

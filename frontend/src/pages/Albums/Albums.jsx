@@ -1,6 +1,5 @@
-// Albums.jsx
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import Search from '../../components/Search';
 import styles from '../../css/Albums.module.css';
@@ -13,28 +12,28 @@ export default function Albums() {
   const [newTitle, setNewTitle] = useState('');
 
   const navigate = useNavigate();
-  const user = JSON.parse(localStorage.getItem('activeUser'));
+  const { userId } = useParams();
 
   useEffect(() => {
-    if (!user) {
+    if (!userId) {
       navigate('/login');
       return;
     }
 
     axios
-      .get(`http://localhost:3000/albums?userId=${user.id}`)
+      .get(`http://localhost:3000/albums?userId=${userId}`)
       .then((res) => setAlbums(res.data))
       .catch((err) => {
         console.error('Failed to load albums:', err);
         alert('Error loading albums');
       });
-  }, []);
+  }, [userId]);
 
   const addAlbum = async () => {
     if (newTitle.trim() === "") return;
 
     const newAlbum = await create("albums", {
-      userId: user.id,
+      userId: parseInt(userId),
       title: newTitle.trim(),
     });
 
@@ -46,17 +45,15 @@ export default function Albums() {
     <div className={styles.wrapper}>
       <h2 className={styles.title}>Your Albums</h2>
 
-
       <Search
         resource="albums"
-        userId={user.id}
+        userId={userId}
         setResults={setAlbums}
         searchBy={searchBy}
         setSearchBy={setSearchBy}
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
       />
-
 
       <div className={styles.searchControls}>
         <input
@@ -80,7 +77,7 @@ export default function Albums() {
           <li key={album.id}>
             <div
               className={styles.card}
-              onClick={() => navigate(`photos/${album.id}`)}
+              onClick={() => navigate(`${album.id}/photos`)}
             >
               <h3>Album #{album.id}</h3>
               <p>{album.title}</p>

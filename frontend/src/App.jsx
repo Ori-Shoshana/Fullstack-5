@@ -6,34 +6,7 @@ import Photos from './pages/Albums/Photos.jsx';
 import Posts from './pages/Posts/Posts.jsx';
 import Comments from './pages/Posts/Comments.jsx';
 import UserInfo from './pages/Profile/UserInfo.jsx';
-import styles from './css/MainPage.module.css';
-import PropTypes from "prop-types";
-
-const MainPage = (props) => {
-  const { user, navigate, handleLogout, toggleInfo } = props;
-  return (
-  <div className={styles.container}>
-    <h1 className={styles.welcome}>Welcome, {user.name}</h1>
-
-    <div className={styles.navButtons}>
-      <button onClick={toggleInfo}>Info</button>
-      <button onClick={() => navigate('todos')}>Todos</button>
-      <button onClick={() => navigate('posts')}>Posts</button>
-      <button onClick={() => navigate('albums')}>Albums</button>
-      <button onClick={handleLogout}>Logout</button>
-    </div>
-  </div>
-  );
-};
-
-MainPage.propTypes = {
-  user: PropTypes.shape({
-    name: PropTypes.string.isRequired,
-  }).isRequired,
-  navigate: PropTypes.func.isRequired,
-  handleLogout: PropTypes.func.isRequired,
-  toggleInfo: PropTypes.func.isRequired,
-};
+import MainPage from './mainPage.jsx';
 
 const App = () => {
   const navigate = useNavigate();
@@ -68,11 +41,12 @@ const App = () => {
             />
           }
         />
-        <Route path="todos" element={<Todos />} />
-        <Route path="posts" element={<Posts />} />
-        <Route path="posts/comments/:postId" element={<Comments />} />
-        <Route path="albums" element={<Albums />} />
-        <Route path="albums/photos/:albumId" element={<Photos />} />
+        <Route path="users/:userId/todos" element={<Todos />} />
+        <Route path="users/:userId/posts" element={<Posts />} />
+        <Route path="users/:userId/posts/:postId/comments" element={<Comments />} />
+        <Route path="users/:userId/albums" element={<Albums />} />
+        <Route path="users/:userId/albums/:albumId/photos" element={<Photos />} />
+
       </Routes>
     </>
   );
