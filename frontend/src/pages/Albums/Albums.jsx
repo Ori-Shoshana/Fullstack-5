@@ -1,44 +1,46 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Search from '../../components/Search';
 import styles from '../../css/Albums.module.css';
-import { create } from '../../api/crudService';
 
 export default function Albums() {
   const [albums, setAlbums] = useState([]);
+  const [allAlbums, setAllAlbums] = useState([]); // שמירה של כל האלבומים בזיכרון
   const [searchBy, setSearchBy] = useState('title');
   const [searchQuery, setSearchQuery] = useState('');
-  const [newTitle, setNewTitle] = useState('');
+  const [searchParams, setSearchParams] = useState(null);
 
   const navigate = useNavigate();
-  const { userId } = useParams();
+  const user = JSON.parse(localStorage.getItem('activeUser'));
 
   useEffect(() => {
-    if (!userId) {
+    if (!user) {
       navigate('/login');
       return;
     }
 
     axios
-      .get(`http://localhost:3000/albums?userId=${userId}`)
-      .then((res) => setAlbums(res.data))
+      .get(`http://localhost:3000/albums?userId=${user.id}`)
+      .then((res) => {
+        setAlbums(res.data);
+        setAllAlbums(res.data); // שמור את כל האלבומים ב־allAlbums
+      })
       .catch((err) => {
         console.error('Failed to load albums:', err);
         alert('Error loading albums');
       });
-  }, [userId]);
+  }, []);
 
-  const addAlbum = async () => {
-    if (newTitle.trim() === "") return;
+  const handleSearch = () => {
+    setSearchParams({ by: searchBy, query: searchQuery });
+  };
 
-    const newAlbum = await create("albums", {
-      userId: parseInt(userId),
-      title: newTitle.trim(),
-    });
-
-    setAlbums((prev) => [...prev, newAlbum]);
-    setNewTitle("");
+  const handleClear = () => {
+    setSearchParams(null);
+    setSearchQuery('');
+    setSearchBy('title');
+    setAlbums(allAlbums); // איפוס מתוך זיכרון - ללא axios
   };
 
   return (
@@ -47,32 +49,21 @@ export default function Albums() {
 
       <Search
         resource="albums"
-        userId={userId}
+        userId={user.id}
         setResults={setAlbums}
         searchBy={searchBy}
         setSearchBy={setSearchBy}
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
+        searchParams={searchParams}
+        onSearch={handleSearch}
+        onClear={handleClear}
       />
-
-      <div className={styles.searchControls}>
-        <input
-          className={styles.input}
-          type="text"
-          placeholder="Enter new album title"
-          value={newTitle}
-          onChange={(e) => setNewTitle(e.target.value)}
-        />
-        <button className={styles.select} onClick={addAlbum}>
-          Add Album
-        </button>
-      </div>
 
       <ul className={styles.cardList}>
         {albums.length === 0 && (
           <p className={styles.noResults}>No matching albums found.</p>
         )}
-
         {albums.map((album) => (
           <li key={album.id}>
             <div

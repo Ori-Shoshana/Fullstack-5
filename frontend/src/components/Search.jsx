@@ -1,25 +1,36 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import axios from 'axios';
 import styles from '../css/Components/Search.module.css';
 
-export default function Search(props) {
-  const { resource, setResults, userId, searchBy, setSearchBy, searchQuery, setSearchQuery, searchParams, onSearch, onClear } = props;
-
+export default function Search({
+  resource,
+  setResults,
+  userId,
+  searchBy,
+  setSearchBy,
+  searchQuery,
+  setSearchQuery,
+  searchParams,
+  onSearch,
+  onClear,
+}) {
   useEffect(() => {
-    if (!searchParams?.query) return;
+    if (!searchParams?.query?.trim()) return;
 
     const baseUrl = `http://localhost:3000/${resource}`;
     let query = `?userId=${userId}`;
 
     if (resource === 'todos' && searchParams.by === 'completed') {
       query += `&completed=true`;
-      query += `&title=${searchParams.query}`;
+      query += `&title_like=${searchParams.query}`;
     } else if (searchParams.by === 'id') {
       query += `&id=${searchParams.query}`;
     } else {
-      query += `&${searchParams.by}=${searchParams.query}`;
+      query += `&${searchParams.by}_like=${searchParams.query}`;
     }
+
+    console.log('🔎 SEARCH URL:', baseUrl + query);
 
     axios
       .get(baseUrl + query)
@@ -68,8 +79,8 @@ Search.propTypes = {
   setSearchQuery: PropTypes.func.isRequired,
   searchParams: PropTypes.shape({
     query: PropTypes.string,
-    by: PropTypes.string
+    by: PropTypes.string,
   }).isRequired,
   onSearch: PropTypes.func.isRequired,
-  onClear: PropTypes.func.isRequired
+  onClear: PropTypes.func.isRequired,
 };

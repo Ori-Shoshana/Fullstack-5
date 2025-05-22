@@ -71,7 +71,7 @@ export default function Photos() {
 
   return (
     <div className={styles.wrapper}>
-      <button onClick={() => navigate(`/users/${userId}/albums`)} className={styles.backButton}>
+      <button onClick={() => navigate(`/home/users/${userId}/albums`)} className={styles.backButton}>
         ← Back to Albums
       </button>
 
