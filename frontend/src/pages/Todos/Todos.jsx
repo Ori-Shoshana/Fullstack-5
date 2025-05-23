@@ -1,63 +1,77 @@
 import React, { useState, useEffect, useCallback, useMemo } from "react";
-import { useParams } from "react-router-dom";
 import styles from "../../css/Todos/Todos.module.css";
 import TodoPopup from "./TodoPopup";
 import TodoListDisplay from "./TodoListDisplay";
 import Search from "../../components/Search";
 import { getAll, create, update, remove } from "../../api/crudService";
 
+
 export default function Todos() {
-  const { userId } = useParams();
+  const user = JSON.parse(localStorage.getItem('activeUser'));
   const [selectedTodo, setSelectedTodo] = useState(null);
   const [todos, setTodos] = useState([]);
+  const [cacheTodos, setCacheTodos] = useState([]);
   const [title, setTitle] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [searchBy, setSearchBy] = useState("title");
-
+  const [searchParams, setSearchParams] = useState(null);
+  
   useEffect(() => {
     const fetchTodos = async () => {
-      const data = await getAll("todos", userId);
+      const data = await getAll("todos", user.id);
       setTodos(data);
+      setCacheTodos(data);
     };
     fetchTodos();
-  }, [userId]);
+  }, []);
 
   const addTodo = useCallback(async () => {
     if (title.trim() === "") return;
     const newTodo = await create("todos", {
-      userId: parseInt(userId),
+      userId: user.id,
       title: title.trim(),
       completed: false,
     });
+  
     setTodos((prev) => [...prev, newTodo]);
+    setCacheTodos((prev) => [...prev, newTodo]);
     setTitle("");
-  }, [title, userId]);
+  }, [title]);
+
 
   const updateTodoTitle = useCallback(async (id, newTitle) => {
-    setTodos((prev) => {
-      const todoToUpdate = prev.find((todo) => todo.id === id);
-      if (!todoToUpdate) return prev;
-      const updatedTodo = { ...todoToUpdate, title: newTitle };
-      update("todos", id, updatedTodo); // Don't await to avoid stalling
-      return prev.map((todo) => (todo.id === id ? updatedTodo : todo));
-    });
+    const updater = (todo) =>
+      todo.id === id ? { ...todo, title: newTitle } : todo;
+  
+    update("todos", id, { title: newTitle }); // fire and forget
+  
+    setTodos((prev) => prev.map(updater));
+    setCacheTodos((prev) => prev.map(updater));
   }, []);
+  
 
   // ensures that the same function instance is passed to each TodoItem
   const deleteTodo = useCallback(async (id) => {
     await remove("todos", id);
+  
     setTodos((prev) => prev.filter((todo) => todo.id !== id));
+    setCacheTodos((prev) => prev.filter((todo) => todo.id !== id));
   }, []);
+  
 
   const toggleDone = useCallback(async (id) => {
-    setTodos((prev) => {
-      const todo = prev.find((t) => t.id === id);
-      if (!todo) return prev;
-      const updatedTodo = { ...todo, completed: !todo.completed };
-      update("todos", id, updatedTodo);
-      return prev.map((t) => (t.id === id ? updatedTodo : t));
-    });
-  }, []);
+    const toggle = (todo) =>
+      todo.id === id ? { ...todo, completed: !todo.completed } : todo;
+  
+    const updatedTodo = todos.find((t) => t.id === id);
+    if (updatedTodo) {
+      update("todos", id, { ...updatedTodo, completed: !updatedTodo.completed });
+    }
+  
+    setTodos((prev) => prev.map(toggle));
+    setCacheTodos((prev) => prev.map(toggle));
+  }, [todos]);
+  
 
   const handleDoubleClick = useCallback((todo) => {
     setSelectedTodo(todo);
@@ -66,27 +80,7 @@ export default function Todos() {
   const closePopup = useCallback(() => {
     setSelectedTodo(null);
   }, []);
-
-  const [searchParams, setSearchParams] = useState(null);
-
-  const handleSearchClick = useCallback(() => {
-    if (!searchQuery.trim()) return;
-
-    setSearchParams({
-      query: searchQuery.trim(),
-      by: searchBy
-    });
-  }, [searchQuery, searchBy, todos]);
-
-  const handleClearSearch = useCallback(async () => {
-    setSearchQuery("");
-    setSearchBy("title");
-    const allTodos = await getAll("todos", userId);
-    setTodos(allTodos);
-  }, [userId]);
-
-  const memoizedTodos = useMemo(() => todos, [todos]);
-
+  
   return (
     <>
       <div className={styles["header-container"]}>
@@ -94,15 +88,15 @@ export default function Todos() {
 
         <Search
           resource="todos"
-          userId={userId}
+          userId={user.id}
           setResults={setTodos}
           searchBy={searchBy}
           setSearchBy={setSearchBy}
           searchQuery={searchQuery}
           setSearchQuery={setSearchQuery}
           searchParams={searchParams}
-          onSearch={handleSearchClick}
-          onClear={handleClearSearch}
+          setSearchParams={setSearchParams}
+          cachedData={cacheTodos}
         />
 
         <div className={styles["todo-container"]}>
@@ -119,18 +113,20 @@ export default function Todos() {
       </div>
 
       <TodoListDisplay
-        todos={memoizedTodos}
+        todos={todos}
         selectedTodo={selectedTodo}
         onToggleDone={toggleDone}
         onDoubleClick={handleDoubleClick}
       />
 
+
       <TodoPopup
         todo={selectedTodo}
         onClose={closePopup}
-        onSave={updateTodoTitle}
+        onSave={updateTodoTitle}             
         onDelete={deleteTodo}
       />
     </>
   );
 }
+

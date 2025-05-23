@@ -2,21 +2,13 @@ import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import axios from 'axios';
 import styles from '../css/Components/Search.module.css';
+import ClearButton from './buttons/Clear';
 
-export default function Search({
-  resource,
-  setResults,
-  userId,
-  searchBy,
-  setSearchBy,
-  searchQuery,
-  setSearchQuery,
-  searchParams,
-  onSearch,
-  onClear,
-}) {
+export default function Search(props) {
+  const { resource, setResults, userId, searchBy, setSearchBy, searchQuery, setSearchQuery, searchParams, setSearchParams, cachedData } = props;
+
   useEffect(() => {
-    if (!searchParams?.query?.trim()) return;
+    if (!searchParams?.query) return;
 
     const baseUrl = `http://localhost:3000/${resource}`;
     let query = `?userId=${userId}`;
@@ -29,14 +21,29 @@ export default function Search({
     } else {
       query += `&${searchParams.by}_like=${searchParams.query}`;
     }
-
-    console.log('🔎 SEARCH URL:', baseUrl + query);
-
+    
+    console.log(baseUrl + query);
     axios
       .get(baseUrl + query)
       .then((res) => setResults(res.data))
       .catch((err) => console.error('Search error:', err));
   }, [searchParams, resource, userId, setResults]);
+
+  const handleSearchClick = () => {
+    if (!searchQuery.trim()) return;
+    setSearchParams({
+      query: searchQuery.trim(),
+      by: searchBy
+    });
+  };
+
+  const handleClearClick = () => {
+    setSearchQuery('');
+    setSearchBy('title');
+    if (cachedData?.length > 0) {
+      setResults(cachedData);
+    }
+  };
 
   return (
     <div className={styles.searchControls}>
@@ -58,13 +65,12 @@ export default function Search({
         onChange={(e) => setSearchQuery(e.target.value)}
       />
 
-      <button className={styles.searchButton} onClick={onSearch}>
+      <button className={styles.searchButton} onClick={handleSearchClick}>
         Search
       </button>
 
-      <button className={styles.clearButton} onClick={onClear}>
-        Clear
-      </button>
+
+      <ClearButton onClear={handleClearClick} />
     </div>
   );
 }
@@ -79,8 +85,8 @@ Search.propTypes = {
   setSearchQuery: PropTypes.func.isRequired,
   searchParams: PropTypes.shape({
     query: PropTypes.string,
-    by: PropTypes.string,
+    by: PropTypes.string
   }).isRequired,
-  onSearch: PropTypes.func.isRequired,
-  onClear: PropTypes.func.isRequired,
+  setSearchParams: PropTypes.func.isRequired,     
+  cachedData: PropTypes.array.isRequired          
 };

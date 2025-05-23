@@ -21,6 +21,18 @@
     flex-wrap: wrap;
   }
   
+  button {
+    height: 50px; 
+    min-width: 100px; 
+    border-radius: 40px;
+    background: white;
+    color: #681212;
+    font-size: 18px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
   .select {
     padding: 10px;
     font-size: 14px;
