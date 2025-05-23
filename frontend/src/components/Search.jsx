@@ -8,18 +8,18 @@ export default function Search(props) {
   const { resource, setResults, userId, searchBy, setSearchBy, searchQuery, setSearchQuery, searchParams, setSearchParams, cachedData } = props;
 
   useEffect(() => {
-    if (!searchParams?.query) return;
+    if (!searchParams?.query?.trim()) return;
 
     const baseUrl = `http://localhost:3000/${resource}`;
     let query = `?userId=${userId}`;
 
     if (resource === 'todos' && searchParams.by === 'completed') {
       query += `&completed=true`;
-      query += `&title_like=${searchParams.query}`;
+      query += `&title=${searchParams.query}`;
     } else if (searchParams.by === 'id') {
       query += `&id=${searchParams.query}`;
     } else {
-      query += `&${searchParams.by}_like=${searchParams.query}`;
+      query += `&${searchParams.by}=${searchParams.query}`;
     }
     
     console.log(baseUrl + query);

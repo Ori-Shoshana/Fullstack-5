@@ -56,6 +56,7 @@ export default function Todos() {
   
     setTodos((prev) => prev.filter((todo) => todo.id !== id));
     setCacheTodos((prev) => prev.filter((todo) => todo.id !== id));
+    console.log(cacheTodos);
   }, []);
   
 
