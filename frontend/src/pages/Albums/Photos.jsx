@@ -169,14 +169,16 @@ export default function Photos() {
         </button>
       </div>
 
-      <div className={styles.pagination}>
-        <button onClick={handlePrev} disabled={currentPage === 1}>
-          ← Previous
-        </button>
-        <span>Page {currentPage}</span>
-        <button onClick={handleNext} disabled={!hasMore}>
-          Next →
-        </button>
+      <div className={styles.paginationWrapper}>
+        <div className={styles.pagination}>
+          <button onClick={handlePrev} disabled={currentPage === 1}>
+            ← Previous
+          </button>
+          <span>Page {currentPage}</span>
+          <button onClick={handleNext} disabled={!hasMore}>
+            Next →
+          </button>
+        </div>
       </div>
 
       <PhotoPopup

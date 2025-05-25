@@ -55,46 +55,6 @@
   text-align: left;
 }
 
-.pagination {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 20px;
-}
-
-.pagination button {
-  padding: 10px 20px;
-  font-size: 14px;
-  background-color: #e0e0e0;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: bold;
-  transition: background-color 0.2s ease;
-}
-
-.pagination button:hover:enabled {
-  background-color: #d0cbe6;
-}
-
-.pagination button:disabled {
-  background-color: #ccc;
-  cursor: not-allowed;
-}
-
-.pagination span {
-  font-size: 16px;
-  font-weight: 500;
-  color: #333;
-}
-.addPhotoContainer {
-  margin-top: 2rem;
-  display: flex;
-  gap: 1rem;
-  justify-content: center;
-  flex-wrap: wrap;
-}
-
 .addButton {
   padding: 10px 16px;
   font-size: 16px;
@@ -121,13 +81,6 @@
 .select:focus {
   outline: none;
   border-color: #6666ff;
-}
-.addPhotoContainer {
-  margin-top: 2rem;
-  display: flex;
-  gap: 1rem;
-  justify-content: center;
-  flex-wrap: wrap;
 }
 
 .addButton {
@@ -157,4 +110,51 @@
 .deleteButton:hover {
   transform: scale(1.2);
   color: #990000;
+}
+
+.addPhotoContainer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 3rem; /* ✅ מרווח מתחת להוספה */
+}
+
+.paginationWrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-top: 1rem;
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 12px 20px;
+  border-radius: 30px;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(6px);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.pagination button {
+  padding: 8px 16px;
+  font-size: 14px;
+  border-radius: 20px;
+  border: none;
+  font-weight: bold;
+  color: #0e25a9;
+  background-color: #e3eaff;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.pagination button:hover {
+  background-color: #c5d8ff;
+}
+
+.pagination span {
+  font-size: 15px;
+  color: #444;
 }
