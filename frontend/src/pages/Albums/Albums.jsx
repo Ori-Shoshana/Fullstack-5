@@ -5,6 +5,8 @@ import { create, getAll } from '../../api/crudService';
 import styles from '../../css/Albums/Albums.module.css';
 import Add from '../../components/Add';
 import AlbumList from './AlbumList';
+import BackButton from '../../components/BackButton';
+
 
 export default function Albums() {
   const [albums, setAlbums] = useState([]);
@@ -53,6 +55,7 @@ export default function Albums() {
 
   return (
     <div className={styles.wrapper}>
+      <BackButton to="/home" label="Back to Home" />
       <h2 className={styles.title}>Your Albums</h2>
 
       <div className={styles.controlsContainer}>

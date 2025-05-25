@@ -5,6 +5,7 @@ import styles from '../../css/Comments/Comments.module.css';
 import CommentPopup from './CommentPopup';
 import CommentList from './CommentsList';
 import AddCommentForm from './AddCommentForm';
+import BackButton from '../../components/BackButton';
 
 export default function Comments() {
   const { userId, postId } = useParams();
@@ -57,36 +58,31 @@ export default function Comments() {
     await update("comments", id, updatedData);
   };
 
-return (
-  <div className={styles.wrapper}>
-    <button
-      onClick={() => navigate(`/home/users/${userId}/posts`)}
-      className={styles.backButton}
-    >
-      ← Back to Post
-    </button>
+  return (
+    <div className={styles.wrapper}>
+      <BackButton to={`/home/users/${userId}/posts`} label="Back to Posts" />
 
-    <h2 className={styles.title}>Comments for Post #{postId}</h2>
+      <h2 className={styles.title}>Comments for Post #{postId}</h2>
 
-    <CommentList
-      comments={comments}
-      currentUser={user}
-      onEdit={setEditingComment}
-      onDelete={deleteComment}
-    />
+      <CommentList
+        comments={comments}
+        currentUser={user}
+        onEdit={setEditingComment}
+        onDelete={deleteComment}
+      />
 
-    <AddCommentForm
-      value={newComment}
-      onChange={(e) => setNewComment(e.target.value)}
-      onSubmit={addComment}
-    />
+      <AddCommentForm
+        value={newComment}
+        onChange={(e) => setNewComment(e.target.value)}
+        onSubmit={addComment}
+      />
 
-    <CommentPopup
-      comment={editingComment}
-      onClose={() => setEditingComment(null)}
-      onSave={updateComment}
-    />
-  </div>
-);
+      <CommentPopup
+        comment={editingComment}
+        onClose={() => setEditingComment(null)}
+        onSave={updateComment}
+      />
+    </div>
+  );
 
 }

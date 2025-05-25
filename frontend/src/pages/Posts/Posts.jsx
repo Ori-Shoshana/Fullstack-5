@@ -6,6 +6,7 @@ import styles from '../../css/Posts/Posts.module.css';
 import PostPopup from './PostPopup';
 import PostInfoPopup from './PostInfoPopup';
 import PostList from './PostList';
+import BackButton from '../../components/BackButton';
 
 export default function Posts() {
   const { userId } = useParams();
@@ -65,53 +66,54 @@ export default function Posts() {
     setEditingPost(null);
   };
 
- return (
-  <div>
-    <h2 className={styles.title}>Your Posts</h2>
+  return (
+    <div>
+      <BackButton to="/home" label="Back to Home" />
+      <h2 className={styles.title}>Your Posts</h2>
 
-    <Search
-      resource="posts"
-      userId={userId}
-      setResults={setPosts}
-      searchBy={searchBy}
-      setSearchBy={setSearchBy}
-      searchQuery={searchQuery}
-      setSearchQuery={setSearchQuery}
-      searchParams={searchParams}
-      setSearchParams={setSearchParams}
-      cachedData={cachePosts}
-    />
+      <Search
+        resource="posts"
+        userId={userId}
+        setResults={setPosts}
+        searchBy={searchBy}
+        setSearchBy={setSearchBy}
+        searchQuery={searchQuery}
+        setSearchQuery={setSearchQuery}
+        searchParams={searchParams}
+        setSearchParams={setSearchParams}
+        cachedData={cachePosts}
+      />
 
-    <PostList
-      posts={posts}
-      onEdit={setEditingPost}
-      onView={setViewingPost}
-    />
+      <PostList
+        posts={posts}
+        onEdit={setEditingPost}
+        onView={setViewingPost}
+      />
 
-    <button
-      className={styles.fab}
-      title="Add new post"
-      onClick={() => setEditingPost({ title: '', body: '', userId })}
-    >
-      ＋
-    </button>
+      <button
+        className={styles.fab}
+        title="Add new post"
+        onClick={() => setEditingPost({ title: '', body: '', userId })}
+      >
+        ＋
+      </button>
 
-    <PostPopup
-      post={editingPost}
-      onClose={() => setEditingPost(null)}
-      onSave={savePost}
-      onDelete={deletePost}
-    />
+      <PostPopup
+        post={editingPost}
+        onClose={() => setEditingPost(null)}
+        onSave={savePost}
+        onDelete={deletePost}
+      />
 
-    <PostInfoPopup
-      post={viewingPost}
-      onClose={() => setViewingPost(null)}
-      onShowComments={() => {
-        setViewingPost(null);
-        navigate(`/home/users/${userId}/posts/${viewingPost.id}/comments`);
-      }}
-    />
-  </div>
-);
+      <PostInfoPopup
+        post={viewingPost}
+        onClose={() => setViewingPost(null)}
+        onShowComments={() => {
+          setViewingPost(null);
+          navigate(`/home/users/${userId}/posts/${viewingPost.id}/comments`);
+        }}
+      />
+    </div>
+  );
 
 }

@@ -7,6 +7,7 @@ import PhotoGrid from './PhotoGrid';
 import AddPhotoForm from './AddPhotoForm';
 import PhotoPagination from './PhotoPagination';
 import styles from '../../css/Photos/Photos.module.css';
+import BackButton from '../../components/BackButton';
 
 
 const globalPhotoCache = {}; // shared across navigations
@@ -121,9 +122,7 @@ export default function Photos() {
 
   return (
     <div className={styles.wrapper}>
-      <button onClick={() => navigate(`/home/users/${userId}/albums`)} className={styles.backButton}>
-        ← Back to Albums
-      </button>
+      <BackButton to={`/home/users/${userId}/albums`} label="Back to Albums" />
 
       <h2 className={styles.title}>Photos from Album {albumId}</h2>
 
