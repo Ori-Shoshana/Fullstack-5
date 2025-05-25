@@ -2,7 +2,8 @@ import React, { useState } from "react";
 import PropTypes from "prop-types";
 import styles from "../css/Components/Add.module.css";
 
-export default function Add({ onAdd, placeholder, type }) {
+export default function Add(props) {
+  const { onAdd, placeholder, type } = props;
   const [title, setTitle] = useState("");
 
   const handleAddClick = () => {
