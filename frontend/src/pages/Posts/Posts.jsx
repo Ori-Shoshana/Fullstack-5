@@ -92,7 +92,11 @@ export default function Posts() {
               <strong>Post #{post.id}</strong> – {post.title}
             </div>
             <div>
-              <button onClick={() => setViewingPost(post)} title="View Info">
+              <button
+                className={styles.infoButton}
+                onClick={() => setViewingPost(post)}
+                title="View Info"
+              >
                 ℹ️
               </button>
             </div>

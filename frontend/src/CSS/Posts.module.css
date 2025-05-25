@@ -38,7 +38,7 @@
 .item button {
   padding: 6px 12px;
   font-size: 14px;
-  background-color: #e0e0e0;
+  background-color: transparent;
   border: none;
   border-radius: 6px;
   cursor: pointer;
@@ -144,4 +144,18 @@
 .fab:hover {
   background-color: #135ba1;
   transform: scale(1.05);
+}
+
+.infoButton {
+  all: unset; /* מוחק את כל העיצוב הבסיסי של כפתור */
+  cursor: pointer;
+  font-size: 20px;
+  line-height: 1;
+  color: inherit;
+  transition: transform 0.2s ease;
+}
+
+.infoButton:hover {
+  transform: scale(1.2);
+  color: #1976d2; /* או תשאיר inherit אם אתה לא רוצה צבע אחר ב־hover */
 }

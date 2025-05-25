@@ -111,8 +111,6 @@ export default function Photos() {
     setSelectedPhoto(null);
   };
 
-
-
   const updatePhoto = async (id, updatedData) => {
     const updatedList = photos.map((photo) =>
       photo.id === id ? { ...photo, ...updatedData } : photo
@@ -125,7 +123,6 @@ export default function Photos() {
 
     await update("photos", id, updatedData);
   };
-
 
   return (
     <div className={styles.wrapper}>
