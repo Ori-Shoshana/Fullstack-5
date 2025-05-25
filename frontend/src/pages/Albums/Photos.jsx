@@ -29,6 +29,7 @@ export default function Photos() {
 
     const cachedPage = globalPhotoCache[albumId][currentPage];
     if (cachedPage) {
+      console.log("from cache");
       setPhotos(cachedPage);
       setHasMore(cachedPage.length === PHOTOS_PER_PAGE);
       return;
@@ -36,6 +37,7 @@ export default function Photos() {
 
     const loadPhotos = async () => {
       try {
+        console.log("fetching");
         const data = await getByPage('photos', 'albumId', albumId, currentPage, PHOTOS_PER_PAGE);
         setPhotos(data);
         setHasMore(data.length === PHOTOS_PER_PAGE);

@@ -30,8 +30,8 @@ export default function Search(props) {
     }
     if (searchParams.by === 'id') {
       query += `&id=${searchParams.query}`;
-    } else {
-      query += `&${searchParams.by}_like=${searchParams.query}`;
+    } else if(searchParams.by === 'title'){
+      query += `&$title_like=${searchParams.query}`;
     }
     
     search(resource, query)

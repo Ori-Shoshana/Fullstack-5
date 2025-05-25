@@ -60,13 +60,14 @@ export default function Todos() {
   
   
   const addTodo = useCallback(async () => {
+    console.log(title.trim());
     if (title.trim() === "") return;
     const newTodo = await create("todos", {
       userId: user.id,
       title: title.trim(),
       completed: false,
     });
-  
+    
     setTodos((prev) => [...prev, newTodo]);
     setCacheTodos((prev) => [...prev, newTodo]);
     setTitle("");
@@ -140,7 +141,7 @@ export default function Todos() {
           setSortBy={setSortBy}
         />
         
-        <Add onAdd={addTodo} placeholder="Add a new task" type="Task" />  
+        <Add onAdd={addTodo} placeholder="Add a new task" type="Task" title={title} setTitle={setTitle}/>  
       </div>
 
       <TodoListDisplay

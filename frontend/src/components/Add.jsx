@@ -1,10 +1,9 @@
-import React, { useState } from "react";
+import React from "react";
 import PropTypes from "prop-types";
 import styles from "../css/Components/Add.module.css";
 
 export default function Add(props) {
-  const { onAdd, placeholder, type } = props;
-  const [title, setTitle] = useState("");
+  const { onAdd, placeholder, type, title, setTitle } = props;
 
   const handleAddClick = () => {
     if (title.trim() === "") return;
@@ -13,7 +12,7 @@ export default function Add(props) {
   };
 
   return (
-    <div>
+    <div >
       <input
         type="text"
         placeholder={placeholder}
@@ -33,5 +32,7 @@ export default function Add(props) {
 Add.propTypes = {
   onAdd: PropTypes.func.isRequired,
   placeholder: PropTypes.string.isRequired,
-  type: PropTypes.string.isRequired
+  type: PropTypes.string.isRequired,
+  title: PropTypes.string.isRequired,
+  setTitle: PropTypes.func.isRequired
 };

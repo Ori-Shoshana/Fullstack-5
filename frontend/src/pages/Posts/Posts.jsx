@@ -5,6 +5,7 @@ import { create, remove, update, getAll } from '../../api/crudService';
 import styles from '../../css/Posts.module.css';
 import PostPopup from './PostPopup';
 import PostInfoPopup from './PostInfoPopup';
+import { Info } from "lucide-react";
 
 export default function Posts() {
   const { userId } = useParams();
@@ -65,7 +66,7 @@ export default function Posts() {
   };
 
   return (
-    <div className={styles.wrapper}>
+    <div >
       <h2 className={styles.title}>Your Posts</h2>
 
       <Search
@@ -81,7 +82,7 @@ export default function Posts() {
         cachedData={cachePosts}
       />
 
-      <ul className={styles.list}>
+      <ul className={styles.wrapper}>
         {posts.map((post) => (
           <li
             key={post.id}
@@ -97,7 +98,7 @@ export default function Posts() {
                 onClick={() => setViewingPost(post)}
                 title="View Info"
               >
-                ℹ️
+                <Info size={18} strokeWidth={2} />
               </button>
             </div>
           </li>

@@ -14,7 +14,6 @@ export default function UserInfo({ user, onClose }) {
         <p><strong>Username:</strong> {user.username}</p>
         <p><strong>Email:</strong> {user.email}</p>
         <p><strong>Phone:</strong> {user.phone}</p>
-        <p><strong>Website (Password):</strong> {user.website}</p>
 
         <div className={styles.section}>
           <h4>Address</h4>

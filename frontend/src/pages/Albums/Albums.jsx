@@ -68,7 +68,7 @@ export default function Albums() {
           cachedData={cacheAlbums}
         />
 
-        <Add onAdd={addAlbum} placeholder="New album title" type="Album" />  
+        <Add onAdd={addAlbum} placeholder="New album title" type="Album" title={newTitle} setTitle={setNewTitle}/>  
       </div>
 
 
