@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
-import styles from "../../css/Todos/TodoPopup.module.css"; 
+import styles from "../../css/PhotoPopup.module.css";
 import Save from "../../components/buttons/Save";
 import Cancel from "../../components/buttons/Cancel";
 import Delete from "../../components/buttons/Delete";
@@ -36,7 +36,7 @@ export default function PhotoPopup({ photo, onClose, onSave, onDelete }) {
   };
 
   const handleDelete = () => {
-      onDelete(photo.id);
+    onDelete(photo.id);
   };
 
   return (
@@ -55,9 +55,12 @@ export default function PhotoPopup({ photo, onClose, onSave, onDelete }) {
           placeholder="Photo URL"
           onChange={(e) => setUrl(e.target.value)}
         />
-        <Save onClick={handleSave} />
-        <Cancel onClick={onClose} />
-        {onDelete && <Delete onClick={handleDelete} />} 
+        <div className={styles.buttonRow}>
+          <Save onClick={handleSave} />
+          <Cancel onClick={onClose} />
+          {onDelete && <Delete onClick={handleDelete} />}
+        </div>
+
       </div>
     </div>
   );
@@ -67,5 +70,5 @@ PhotoPopup.propTypes = {
   photo: PropTypes.object,
   onClose: PropTypes.func.isRequired,
   onSave: PropTypes.func.isRequired,
-  onDelete: PropTypes.func, 
+  onDelete: PropTypes.func,
 };

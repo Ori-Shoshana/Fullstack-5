@@ -47,13 +47,16 @@ export default function PostPopup({ post, onClose, onSave, onDelete }) {
       <div className={styles["popup-content"]}>
         <h2>Edit Post</h2>
         <input
+          className={styles.input}
           type="text"
           placeholder="Post title"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
         />
+
         <textarea
           placeholder="Post body"
+          className={styles.input}
           value={body}
           onChange={(e) => setBody(e.target.value)}
         />
