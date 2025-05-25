@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Search from '../../components/Search';
 import { create, getAll } from '../../api/crudService';
 import styles from '../../css/Albums.module.css';
+import Add from '../../components/Add';
 
 export default function Albums() {
   const [albums, setAlbums] = useState([]);
@@ -67,19 +68,7 @@ export default function Albums() {
           cachedData={cacheAlbums}
         />
 
-        <div className={styles.addAlbumContainer}>
-          <input
-            className={styles.inputGlass}
-            type="text"
-            placeholder="New album title"
-            value={newTitle}
-            onChange={(e) => setNewTitle(e.target.value)}
-          />
-
-          <button className={styles.addButton} onClick={addAlbum}>
-            Add Album
-          </button>
-        </div>
+        <Add onAdd={addAlbum} placeholder="New album title" type="Album" />  
       </div>
 
 

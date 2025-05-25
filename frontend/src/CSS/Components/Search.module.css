@@ -23,7 +23,6 @@
 
 .input::placeholder {
   color: #0e25a9;
-  opacity: 1;
 }
 
 .input:focus {
