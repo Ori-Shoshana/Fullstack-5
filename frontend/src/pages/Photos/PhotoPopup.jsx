@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
-import styles from "../../css/PhotoPopup.module.css";
+import styles from '../../css/Photos/Photos.module.css';
 import Save from "../../components/buttons/Save";
 import Cancel from "../../components/buttons/Cancel";
 import Delete from "../../components/buttons/Delete";

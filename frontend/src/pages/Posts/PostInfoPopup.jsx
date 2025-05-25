@@ -1,5 +1,5 @@
 import React from 'react';
-import styles from '../../css/PostInfoPopup.module.css';
+import styles from '../../css/Posts/PostInfoPopup.module.css';
 
 export default function PostInfoPopup({ post, onClose, onShowComments }) {
   if (!post) return null;

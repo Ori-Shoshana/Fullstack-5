@@ -2,8 +2,12 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { create, remove, update, getByPage } from '../../api/crudService';
-import styles from '../../css/Photos.module.css';
 import PhotoPopup from './PhotoPopup';
+import PhotoGrid from './PhotoGrid';
+import AddPhotoForm from './AddPhotoForm';
+import PhotoPagination from './PhotoPagination';
+import styles from '../../css/Photos/Photos.module.css';
+
 
 const globalPhotoCache = {}; // shared across navigations
 
@@ -123,54 +127,20 @@ export default function Photos() {
 
       <h2 className={styles.title}>Photos from Album {albumId}</h2>
 
-      <div className={styles.grid}>
-        {photos.map((photo) => (
-          <div
-            key={photo.id}
-            className={styles.card}
-            onDoubleClick={() => setSelectedPhoto(photo)}
-          >
-            <img
-              src={photo.url || photo.thumbnailUrl}
-              alt={photo.title}
-              className={styles.image}
-            />
-            <p className={styles.caption}>{photo.title}</p>
-          </div>
-        ))}
-      </div>
-
-      <div className={styles.addPhotoContainer}>
-        <input
-          className={styles.input}
-          type="text"
-          placeholder="Photo title"
-          value={newTitle}
-          onChange={(e) => setNewTitle(e.target.value)}
-        />
-        <input
-          className={styles.input}
-          type="text"
-          placeholder="Photo URL"
-          value={newUrl}
-          onChange={(e) => setNewUrl(e.target.value)}
-        />
-        <button className={styles.addButton} onClick={addPhoto}>
-          Add Photo
-        </button>
-      </div>
-
-      <div className={styles.paginationWrapper}>
-        <div className={styles.pagination}>
-          <button onClick={handlePrev} disabled={currentPage === 1}>
-            ← Previous
-          </button>
-          <span>Page {currentPage}</span>
-          <button onClick={handleNext} disabled={!hasMore}>
-            Next →
-          </button>
-        </div>
-      </div>
+      <PhotoGrid photos={photos} onSelect={setSelectedPhoto} />
+      <AddPhotoForm
+        title={newTitle}
+        url={newUrl}
+        setTitle={setNewTitle}
+        setUrl={setNewUrl}
+        onAdd={addPhoto}
+      />
+      <PhotoPagination
+        page={currentPage}
+        hasMore={hasMore}
+        onPrev={handlePrev}
+        onNext={handleNext}
+      />
 
       <PhotoPopup
         photo={selectedPhoto}
@@ -180,4 +150,5 @@ export default function Photos() {
       />
     </div>
   );
+
 }

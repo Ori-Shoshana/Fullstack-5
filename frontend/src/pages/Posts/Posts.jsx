@@ -2,10 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import Search from '../../components/Search';
 import { create, remove, update, getAll } from '../../api/crudService';
-import styles from '../../css/Posts.module.css';
+import styles from '../../css/Posts/Posts.module.css';
 import PostPopup from './PostPopup';
 import PostInfoPopup from './PostInfoPopup';
-import { Info } from "lucide-react";
+import PostList from './PostList';
 
 export default function Posts() {
   const { userId } = useParams();
@@ -65,69 +65,53 @@ export default function Posts() {
     setEditingPost(null);
   };
 
-  return (
-    <div >
-      <h2 className={styles.title}>Your Posts</h2>
+ return (
+  <div>
+    <h2 className={styles.title}>Your Posts</h2>
 
-      <Search
-        resource="posts"
-        userId={userId}
-        setResults={setPosts}
-        searchBy={searchBy}
-        setSearchBy={setSearchBy}
-        searchQuery={searchQuery}
-        setSearchQuery={setSearchQuery}
-        searchParams={searchParams}
-        setSearchParams={setSearchParams}
-        cachedData={cachePosts}
-      />
+    <Search
+      resource="posts"
+      userId={userId}
+      setResults={setPosts}
+      searchBy={searchBy}
+      setSearchBy={setSearchBy}
+      searchQuery={searchQuery}
+      setSearchQuery={setSearchQuery}
+      searchParams={searchParams}
+      setSearchParams={setSearchParams}
+      cachedData={cachePosts}
+    />
 
-      <ul className={styles.wrapper}>
-        {posts.map((post) => (
-          <li
-            key={post.id}
-            className={styles.item}
-            onDoubleClick={() => setEditingPost(post)}
-          >
-            <div className={styles.preview}>
-              <strong>Post #{post.id}</strong> – {post.title}
-            </div>
-            <div>
-              <button
-                className={styles.infoButton}
-                onClick={() => setViewingPost(post)}
-                title="View Info"
-              >
-                <Info size={18} strokeWidth={2} />
-              </button>
-            </div>
-          </li>
-        ))}
-      </ul>
+    <PostList
+      posts={posts}
+      onEdit={setEditingPost}
+      onView={setViewingPost}
+    />
 
-      <button
-        className={styles.fab}
-        title="Add new post"
-        onClick={() => setEditingPost({ title: '', body: '', userId })}
-      >
-        ＋
-      </button>
+    <button
+      className={styles.fab}
+      title="Add new post"
+      onClick={() => setEditingPost({ title: '', body: '', userId })}
+    >
+      ＋
+    </button>
 
-      <PostPopup
-        post={editingPost}
-        onClose={() => setEditingPost(null)}
-        onSave={savePost}
-        onDelete={deletePost}
-      />
+    <PostPopup
+      post={editingPost}
+      onClose={() => setEditingPost(null)}
+      onSave={savePost}
+      onDelete={deletePost}
+    />
 
-      <PostInfoPopup
-        post={viewingPost}
-        onClose={() => setViewingPost(null)}
-        onShowComments={() => {
-          setViewingPost(null);
-          navigate(`/home/users/${userId}/posts/${viewingPost.id}/comments`);
-        }}
-      />
-    </div>
-  );
+    <PostInfoPopup
+      post={viewingPost}
+      onClose={() => setViewingPost(null)}
+      onShowComments={() => {
+        setViewingPost(null);
+        navigate(`/home/users/${userId}/posts/${viewingPost.id}/comments`);
+      }}
+    />
+  </div>
+);
+
 }

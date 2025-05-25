@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Search from '../../components/Search';
 import { create, getAll } from '../../api/crudService';
-import styles from '../../css/Albums.module.css';
+import styles from '../../css/Albums/Albums.module.css';
 import Add from '../../components/Add';
+import AlbumList from './AlbumList';
 
 export default function Albums() {
   const [albums, setAlbums] = useState([]);
@@ -68,26 +69,9 @@ export default function Albums() {
           cachedData={cacheAlbums}
         />
 
-        <Add onAdd={addAlbum} placeholder="New album title" type="Album" title={newTitle} setTitle={setNewTitle}/>  
+        <Add onAdd={addAlbum} placeholder="New album title" type="Album" title={newTitle} setTitle={setNewTitle} />
       </div>
-
-
-      <ul className={styles.cardList}>
-        {albums.length === 0 && (
-          <p className={styles.noResults}>No matching albums found.</p>
-        )}
-        {albums.map((album) => (
-          <li key={album.id}>
-            <div
-              className={styles.card}
-              onClick={() => navigate(`${album.id}/photos`)}
-            >
-              <h3>Album #{album.id}</h3>
-              <p>{album.title}</p>
-            </div>
-          </li>
-        ))}
-      </ul>
+      <AlbumList albums={albums} />
     </div>
   );
 }
