@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import { Routes, Route, useNavigate } from 'react-router-dom';
 import Todos from './pages/Todos/Todos.jsx';
 import Albums from './pages/Albums/Albums.jsx';
-import Photos from './pages/Albums/Photos.jsx';
+import Photos from './pages/Photos/Photos.jsx';
 import Posts from './pages/Posts/Posts.jsx';
-import Comments from './pages/Posts/Comments.jsx';
+import Comments from './pages/Comments/Comments.jsx';
 import UserInfo from './pages/Profile/UserInfo.jsx';
 import MainPage from './mainPage.jsx';
 
