@@ -42,7 +42,6 @@ const RegisterDetailsPage = () => {
     const authData = JSON.parse(localStorage.getItem('newUserAuth'));
 
     try {
-      // קבלת כל המשתמשים כדי לחשב ID חדש
       const usersRes = await fetch('http://localhost:3000/users');
       const users = await usersRes.json();
 

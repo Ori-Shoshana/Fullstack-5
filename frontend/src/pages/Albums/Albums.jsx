@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import Search from '../../components/Search';
-import { create } from '../../api/crudService';
+import { create,getAll } from '../../api/crudService';
 import styles from '../../css/Albums.module.css';
 
 export default function Albums() {
@@ -22,17 +21,20 @@ export default function Albums() {
       return;
     }
 
-    axios
-      .get(`http://localhost:3000/albums?userId=${user.id}`)
-      .then((res) => {
-        setAlbums(res.data);
-        setCacheAlbums(res.data);
-      })
-      .catch((err) => {
+    const fetchAlbums = async () => {
+      try {
+        const data = await getAll('albums', user.id);
+        setAlbums(data);
+        setCacheAlbums(data);
+      } catch (err) {
         console.error('Failed to load albums:', err);
         alert('Error loading albums');
-      });
+      }
+    };
+
+    fetchAlbums();
   }, []);
+
 
   const addAlbum = async () => {
     if (!newTitle.trim()) return;
@@ -51,31 +53,34 @@ export default function Albums() {
     <div className={styles.wrapper}>
       <h2 className={styles.title}>Your Albums</h2>
 
-      <Search
-        resource="albums"
-        userId={user.id}
-        setResults={setAlbums}
-        searchBy={searchBy}
-        setSearchBy={setSearchBy}
-        searchQuery={searchQuery}
-        setSearchQuery={setSearchQuery}
-        searchParams={searchParams}
-        setSearchParams={setSearchParams}
-        cachedData={cacheAlbums}
-      />
-
-      <div className={styles.addAlbumContainer}>
-        <input
-          className={styles.input}
-          type="text"
-          placeholder="New album title"
-          value={newTitle}
-          onChange={(e) => setNewTitle(e.target.value)}
+      <div className={styles.controlsContainer}>
+        <Search
+          resource="albums"
+          userId={user.id}
+          setResults={setAlbums}
+          searchBy={searchBy}
+          setSearchBy={setSearchBy}
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+          searchParams={searchParams}
+          setSearchParams={setSearchParams}
+          cachedData={cacheAlbums}
         />
-        <button className={styles.addButton} onClick={addAlbum}>
-          Add Album
-        </button>
+
+        <div className={styles.addAlbumContainer}>
+          <input
+            className={styles.input}
+            type="text"
+            placeholder="New album title"
+            value={newTitle}
+            onChange={(e) => setNewTitle(e.target.value)}
+          />
+          <button className={styles.addButton} onClick={addAlbum}>
+            Add Album
+          </button>
+        </div>
       </div>
+
 
       <ul className={styles.cardList}>
         {albums.length === 0 && (
@@ -96,4 +101,3 @@ export default function Albums() {
     </div>
   );
 }
-  

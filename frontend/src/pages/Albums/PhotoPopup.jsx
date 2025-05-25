@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import styles from "../../css/Todos/TodoPopup.module.css"; 
 import Save from "../../components/buttons/Save";
 import Cancel from "../../components/buttons/Cancel";
-import Delete from "../../components/buttons/Delete"; // ✅ הוספנו
+import Delete from "../../components/buttons/Delete";
 
 export default function PhotoPopup({ photo, onClose, onSave, onDelete }) {
   const [title, setTitle] = useState("");

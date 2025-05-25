@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import { create, remove, update } from '../../api/crudService';
+import { create, remove, update, getByPage } from '../../api/crudService';
 import styles from '../../css/Photos.module.css';
 import PhotoPopup from './PhotoPopup';
 
@@ -27,18 +26,19 @@ export default function Photos() {
       return;
     }
 
-    const url = `http://localhost:3000/photos?albumId=${albumId}&_page=${currentPage}&_limit=${PHOTOS_PER_PAGE}`;
-    axios
-      .get(url)
-      .then((res) => {
-        setPhotos(res.data);
-        setHasMore(res.data.length === PHOTOS_PER_PAGE);
-        setPhotoCache((prev) => ({ ...prev, [currentPage]: res.data }));
-      })
-      .catch((err) => {
+    const loadPhotos = async () => {
+      try {
+        const data = await getByPage('photos', 'albumId', albumId, currentPage, PHOTOS_PER_PAGE);
+        setPhotos(data);
+        setHasMore(data.length === PHOTOS_PER_PAGE);
+        setPhotoCache((prev) => ({ ...prev, [currentPage]: data }));
+      } catch (err) {
         console.error('Failed to load photos:', err);
         alert('Error loading photos');
-      });
+      }
+    };
+
+    loadPhotos();
   }, [albumId, currentPage, photoCache]);
 
   const handleNext = () => {
@@ -69,51 +69,47 @@ export default function Photos() {
     setNewUrl('');
   };
 
-const deletePhoto = async (id) => {
-  // Delete the photo from the server
-  await remove("photos", id);
+  const deletePhoto = async (id) => {
+    // Delete the photo from the server
+    await remove("photos", id);
 
-  // Re-fetch the current page from the server (in case the photo was on it)
-  const res1 = await axios.get(
-    `http://localhost:3000/photos?albumId=${albumId}&_page=${currentPage}&_limit=${PHOTOS_PER_PAGE}`
-  );
-  let currentPhotos = res1.data;
+    // Re-fetch the current page from the server (in case the photo was on it)
+    const res1 = await getByPage("photos", "albumId", albumId, currentPage, PHOTOS_PER_PAGE);
+    let currentPhotos = res1;
 
-  // If the current page has less than PHOTOS_PER_PAGE photos after deletion
-  // try to pull photos from the next page to fill it
-  if (currentPhotos.length < PHOTOS_PER_PAGE) {
-    const res2 = await axios.get(
-      `http://localhost:3000/photos?albumId=${albumId}&_page=${currentPage + 1}&_limit=${PHOTOS_PER_PAGE}`
-    );
-    let nextPagePhotos = res2.data;
+    // If the current page has less than PHOTOS_PER_PAGE photos after deletion
+    // try to pull photos from the next page to fill it
+    if (currentPhotos.length < PHOTOS_PER_PAGE) {
+      const res2 = await getByPage("photos", "albumId", albumId, currentPage + 1, PHOTOS_PER_PAGE);
+      let nextPagePhotos = res2;
 
-    // Move photos from the next page to the current page until full or next page is empty
-    while (currentPhotos.length < PHOTOS_PER_PAGE && nextPagePhotos.length > 0) {
-      currentPhotos.push(nextPagePhotos.shift());
+      // Move photos from the next page to the current page until full or next page is empty
+      while (currentPhotos.length < PHOTOS_PER_PAGE && nextPagePhotos.length > 0) {
+        currentPhotos.push(nextPagePhotos.shift());
+      }
+
+      // Update the photo cache for both pages
+      setPhotoCache((prev) => ({
+        ...prev,
+        [currentPage]: currentPhotos,
+        [currentPage + 1]: nextPagePhotos,
+      }));
+
+      // Update hasMore based on whether there are any photos left in the next page
+      setHasMore(nextPagePhotos.length > 0);
+    } else {
+      // If the current page is still full, just update the cache normally
+      setPhotoCache((prev) => ({
+        ...prev,
+        [currentPage]: currentPhotos,
+      }));
+      setHasMore(true);
     }
 
-    // Update the photo cache for both pages
-    setPhotoCache((prev) => ({
-      ...prev,
-      [currentPage]: currentPhotos,
-      [currentPage + 1]: nextPagePhotos,
-    }));
-
-    // Update hasMore based on whether there are any photos left in the next page
-    setHasMore(nextPagePhotos.length > 0);
-  } else {
-    // If the current page is still full, just update the cache normally
-    setPhotoCache((prev) => ({
-      ...prev,
-      [currentPage]: currentPhotos,
-    }));
-    setHasMore(true);
-  }
-
-  // Update the UI
-  setPhotos(currentPhotos);
-  setSelectedPhoto(null);
-};
+    // Update the UI
+    setPhotos(currentPhotos);
+    setSelectedPhoto(null);
+  };
 
 
 
@@ -126,7 +122,10 @@ const deletePhoto = async (id) => {
       ...prev,
       [currentPage]: updatedList
     }));
+
+    await update("photos", id, updatedData);
   };
+
 
   return (
     <div className={styles.wrapper}>

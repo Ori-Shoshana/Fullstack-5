@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import axios from 'axios';
 import Search from '../../components/Search';
-import { create, remove, update } from '../../api/crudService';
+import { create, remove, update, getAll } from '../../api/crudService';
 import styles from '../../css/Posts.module.css';
 import PostPopup from './PostPopup';
 import PostInfoPopup from './PostInfoPopup';
@@ -20,22 +19,24 @@ export default function Posts() {
   const [editingPost, setEditingPost] = useState(null);
   const [viewingPost, setViewingPost] = useState(null);
 
+  const fetchPosts = async () => {
+    try {
+      const data = await getAll('posts', userId);
+      setPosts(data);
+      setCachePosts(data);
+    } catch (err) {
+      console.error('Failed to load posts:', err);
+      alert('Error loading posts');
+    }
+  };
+
   useEffect(() => {
     if (!userId) {
       navigate('/login');
       return;
     }
 
-    axios
-      .get(`http://localhost:3000/posts?userId=${userId}`)
-      .then((res) => {
-        setPosts(res.data);
-        setCachePosts(res.data);
-      })
-      .catch((err) => {
-        console.error('Failed to load posts:', err);
-        alert('Error loading posts');
-      });
+    fetchPosts();
   }, [userId]);
 
   const savePost = async (idOrNull, data) => {
@@ -80,7 +81,6 @@ export default function Posts() {
         cachedData={cachePosts}
       />
 
-      {/* רשימת הפוסטים */}
       <ul className={styles.list}>
         {posts.map((post) => (
           <li
@@ -100,7 +100,6 @@ export default function Posts() {
         ))}
       </ul>
 
-      {/* כפתור ➕ */}
       <button
         className={styles.fab}
         title="Add new post"

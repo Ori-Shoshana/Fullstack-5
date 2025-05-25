@@ -25,7 +25,6 @@ const RegisterPage = () => {
         return;
       }
 
-      // שמירת נתוני משתמש זמניים ל-localStorage
       localStorage.setItem('newUserAuth', JSON.stringify({
         username,
         password

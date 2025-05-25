@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import { create, remove, update } from '../../api/crudService';
+import { create, remove, update, getAllBy } from '../../api/crudService';
 import styles from '../../css/Comments.module.css';
 import CommentPopup from './CommentPopup';
 
@@ -15,14 +14,19 @@ export default function Comments() {
   const user = JSON.parse(localStorage.getItem('activeUser'));
 
   useEffect(() => {
-    axios
-      .get(`http://localhost:3000/comments?postId=${postId}`)
-      .then((res) => setComments(res.data))
-      .catch((err) => {
+    const fetchComments = async () => {
+      try {
+        const data = await getAllBy('comments', 'postId', postId);
+        setComments(data);
+      } catch (err) {
         console.error('Failed to load comments:', err);
         alert('Error loading comments');
-      });
+      }
+    };
+
+    fetchComments();
   }, [postId]);
+
 
   const addComment = async () => {
     if (!newComment.trim()) return;

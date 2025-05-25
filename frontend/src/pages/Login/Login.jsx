@@ -28,7 +28,6 @@ const LoginPage = () => {
 
       localStorage.setItem('activeUser', JSON.stringify(user));
 
-      // מעבר לעמוד הבית
       navigate('/home');
     } catch (error) {
       console.error('Login error:', error);
