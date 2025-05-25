@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
-import axios from 'axios';
 import styles from '../css/Components/Search.module.css';
 import ClearButton from './buttons/Clear';
 import { search } from '../api/crudService';
@@ -11,7 +10,7 @@ export default function Search(props) {
     searchBy, setSearchBy,
     searchQuery, setSearchQuery,
     searchParams, setSearchParams,
-    cachedData
+    cachedData, setSortBy
   } = props;
 
   useEffect(() => {
@@ -19,10 +18,17 @@ export default function Search(props) {
 
     let query = `?userId=${userId}`;
 
-    if (resource === 'todos' && searchParams.by === 'completed') {
-      query += `&completed=true`;
-      query += `&title_like=${searchParams.query}`;
-    } else if (searchParams.by === 'id') {
+    if (resource === 'todos'){
+      if(searchParams.by === 'completed') {
+        query += `&completed=true`;
+        query += `&title_like=${searchParams.query}`;
+      } 
+      else if(searchParams.by === 'uncompleted'){
+        query += `&completed=false`;
+        query += `&title_like=${searchParams.query}`;
+      }
+    }
+    if (searchParams.by === 'id') {
       query += `&id=${searchParams.query}`;
     } else {
       query += `&${searchParams.by}_like=${searchParams.query}`;
@@ -39,15 +45,19 @@ export default function Search(props) {
       query: searchQuery.trim(),
       by: searchBy
     });
+    setSearchQuery('');
+    setSortBy && setSortBy('None'); 
   };
 
   const handleClearClick = () => {
     setSearchQuery('');
     setSearchBy('title');
+    setSortBy && setSortBy('None'); 
     if (cachedData?.length > 0) {
       setResults(cachedData);
     }
   };
+  
 
   return (
     <div className={styles.searchControls}>
@@ -59,6 +69,7 @@ export default function Search(props) {
         <option value="title">Search by Title</option>
         <option value="id">Search by Id</option>
         {resource === 'todos' && <option value="completed">Search by Completion</option>}
+        {resource === 'todos' && <option value="uncompleted">Search by Unompletion</option>}
       </select>
 
       <input
@@ -91,5 +102,6 @@ Search.propTypes = {
     by: PropTypes.string
   }).isRequired,
   setSearchParams: PropTypes.func.isRequired,
-  cachedData: PropTypes.array.isRequired
+  cachedData: PropTypes.array.isRequired,
+  setSortBy: PropTypes.func
 };

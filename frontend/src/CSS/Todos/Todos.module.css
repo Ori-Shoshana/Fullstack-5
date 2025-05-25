@@ -50,20 +50,7 @@ body{
     overflow: hidden;
   }
   
-.input-box input {
-    height: 60px; 
-    padding: 20px 40px;
-    border-radius: 40px;
-    border: 2px solid rgba(255, 255, 255, 0.5);
-    font-size: 18px;
-    color: #681212;
-    background: transparent;
-    outline: none;
-  }
 
-.input-box input::placeholder {
-    color: #681212;
-}
 
 
 #todo-container{

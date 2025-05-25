@@ -7,7 +7,6 @@
   justify-content: center;
 }
 
-/* שדה חיפוש */
 .input {
   height: 56px;
   padding: 16px 24px;
@@ -24,7 +23,7 @@
 
 .input::placeholder {
   color: #0e25a9;
-  opacity: 0.6;
+  opacity: 1;
 }
 
 .input:focus {
@@ -33,11 +32,10 @@
   background: rgba(255, 255, 255, 0.2);
 }
 
-/* תפריט בחירה */
 .select {
   height: 56px;
   padding: 0 24px;
-  padding-right: 40px; /* מקום לחץ */
+  padding-right: 40px; 
 
   border-radius: 30px;
   border: 2px solid rgba(255, 255, 255, 0.4);

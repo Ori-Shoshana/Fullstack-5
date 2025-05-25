@@ -1,8 +1,11 @@
+// Photos.jsx
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { create, remove, update, getByPage } from '../../api/crudService';
 import styles from '../../css/Photos.module.css';
 import PhotoPopup from './PhotoPopup';
+
+const globalPhotoCache = {}; // shared across navigations
 
 export default function Photos() {
   const { albumId, userId } = useParams();
@@ -11,7 +14,6 @@ export default function Photos() {
   const [photos, setPhotos] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
-  const [photoCache, setPhotoCache] = useState({});
 
   const [newTitle, setNewTitle] = useState('');
   const [newUrl, setNewUrl] = useState('');
@@ -20,9 +22,15 @@ export default function Photos() {
   const PHOTOS_PER_PAGE = 5;
 
   useEffect(() => {
-    if (photoCache[currentPage]) {
-      setPhotos(photoCache[currentPage]);
-      setHasMore(photoCache[currentPage].length === PHOTOS_PER_PAGE);
+    // Initialize album cache if not already
+    if (!globalPhotoCache[albumId]) {
+      globalPhotoCache[albumId] = {};
+    }
+
+    const cachedPage = globalPhotoCache[albumId][currentPage];
+    if (cachedPage) {
+      setPhotos(cachedPage);
+      setHasMore(cachedPage.length === PHOTOS_PER_PAGE);
       return;
     }
 
@@ -31,7 +39,7 @@ export default function Photos() {
         const data = await getByPage('photos', 'albumId', albumId, currentPage, PHOTOS_PER_PAGE);
         setPhotos(data);
         setHasMore(data.length === PHOTOS_PER_PAGE);
-        setPhotoCache((prev) => ({ ...prev, [currentPage]: data }));
+        globalPhotoCache[albumId][currentPage] = data;
       } catch (err) {
         console.error('Failed to load photos:', err);
         alert('Error loading photos');
@@ -39,7 +47,7 @@ export default function Photos() {
     };
 
     loadPhotos();
-  }, [albumId, currentPage, photoCache]);
+  }, [albumId, currentPage]);
 
   const handleNext = () => {
     if (hasMore) setCurrentPage((prev) => prev + 1);
@@ -59,54 +67,38 @@ export default function Photos() {
       thumbnailUrl: newUrl.trim()
     });
 
-    setPhotos((prev) => [...prev, newPhoto]);
-    setPhotoCache((prev) => ({
-      ...prev,
-      [currentPage]: [...(prev[currentPage] || []), newPhoto]
-    }));
+    const newPhotos = [...photos, newPhoto];
+    setPhotos(newPhotos);
+
+    // update global cache
+    if (!globalPhotoCache[albumId]) globalPhotoCache[albumId] = {};
+    globalPhotoCache[albumId][currentPage] = newPhotos;
 
     setNewTitle('');
     setNewUrl('');
   };
 
   const deletePhoto = async (id) => {
-    // Delete the photo from the server
     await remove("photos", id);
-
-    // Re-fetch the current page from the server (in case the photo was on it)
     const res1 = await getByPage("photos", "albumId", albumId, currentPage, PHOTOS_PER_PAGE);
     let currentPhotos = res1;
 
-    // If the current page has less than PHOTOS_PER_PAGE photos after deletion
-    // try to pull photos from the next page to fill it
     if (currentPhotos.length < PHOTOS_PER_PAGE) {
       const res2 = await getByPage("photos", "albumId", albumId, currentPage + 1, PHOTOS_PER_PAGE);
       let nextPagePhotos = res2;
 
-      // Move photos from the next page to the current page until full or next page is empty
       while (currentPhotos.length < PHOTOS_PER_PAGE && nextPagePhotos.length > 0) {
         currentPhotos.push(nextPagePhotos.shift());
       }
 
-      // Update the photo cache for both pages
-      setPhotoCache((prev) => ({
-        ...prev,
-        [currentPage]: currentPhotos,
-        [currentPage + 1]: nextPagePhotos,
-      }));
-
-      // Update hasMore based on whether there are any photos left in the next page
+      globalPhotoCache[albumId][currentPage] = currentPhotos;
+      globalPhotoCache[albumId][currentPage + 1] = nextPagePhotos;
       setHasMore(nextPagePhotos.length > 0);
     } else {
-      // If the current page is still full, just update the cache normally
-      setPhotoCache((prev) => ({
-        ...prev,
-        [currentPage]: currentPhotos,
-      }));
+      globalPhotoCache[albumId][currentPage] = currentPhotos;
       setHasMore(true);
     }
 
-    // Update the UI
     setPhotos(currentPhotos);
     setSelectedPhoto(null);
   };
@@ -116,10 +108,7 @@ export default function Photos() {
       photo.id === id ? { ...photo, ...updatedData } : photo
     );
     setPhotos(updatedList);
-    setPhotoCache((prev) => ({
-      ...prev,
-      [currentPage]: updatedList
-    }));
+    globalPhotoCache[albumId][currentPage] = updatedList;
 
     await update("photos", id, updatedData);
   };

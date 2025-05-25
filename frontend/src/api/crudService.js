@@ -76,7 +76,6 @@ export const getByPage = async (resource, field, value, page, limit) => {
  * Example: search('todos', 'userId=1&completed=true&title_like=task')
  */
 export const search = async (resource, queryString) => {
-  
-  const response = await axios.get(`${BASE_URL}/${resource}?${queryString}`);
+  const response = await axios.get(`${BASE_URL}/${resource}${queryString}`);
   return response.data;
 };

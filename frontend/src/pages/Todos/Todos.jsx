@@ -4,7 +4,8 @@ import TodoPopup from "./TodoPopup";
 import TodoListDisplay from "./TodoListDisplay";
 import Search from "../../components/Search";
 import { getAll, create, update, remove } from "../../api/crudService";
-
+import Sort from "../../components/Sort";
+import Add from "../../components/Add";
 
 export default function Todos() {
   const user = JSON.parse(localStorage.getItem('activeUser'));
@@ -15,7 +16,8 @@ export default function Todos() {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchBy, setSearchBy] = useState("title");
   const [searchParams, setSearchParams] = useState(null);
-  
+  const [sortBy, setSortBy] = useState('');
+
   useEffect(() => {
     const fetchTodos = async () => {
       const data = await getAll("todos", user.id);
@@ -25,6 +27,38 @@ export default function Todos() {
     fetchTodos();
   }, []);
 
+  useEffect(() => {
+    if (!sortBy || !cacheTodos.length) {
+      setTodos(cacheTodos);
+      return;
+    }
+  
+    const sorted = [...cacheTodos].sort((a, b) => {
+      const aVal = a[sortBy];
+      const bVal = b[sortBy];
+  
+      if (sortBy === 'completed') {
+         // completed first, uncompleted last (reverse)
+         return aVal === bVal ? 0 : aVal ? -1 : 1;
+      } 
+      else if (sortBy === 'uncompleted') {
+       // uncompleted first, completed last
+       if (a.completed === b.completed) return 0;
+       return a.completed ? 1 : -1;
+      }
+      
+  
+      if (typeof aVal === 'string') {
+        return aVal.localeCompare(bVal);
+      }
+  
+      return aVal - bVal;
+    });
+  
+    setTodos(sorted);
+  }, [sortBy, cacheTodos]);
+  
+  
   const addTodo = useCallback(async () => {
     if (title.trim() === "") return;
     const newTodo = await create("todos", {
@@ -86,6 +120,11 @@ export default function Todos() {
     <>
       <div className={styles["header-container"]}>
         <h1>My To-Do List</h1>
+       
+        <Sort
+          sortBy={sortBy}
+          setSortBy={setSortBy}
+        />
 
         <Search
           resource="todos"
@@ -98,19 +137,10 @@ export default function Todos() {
           searchParams={searchParams}
           setSearchParams={setSearchParams}
           cachedData={cacheTodos}
+          setSortBy={setSortBy}
         />
-
-        <div className={styles["todo-container"]}>
-          <div className={styles["input-box"]}>
-            <input
-              type="text"
-              placeholder="Add a new task"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-            />
-            <button className={styles.btn} onClick={addTodo} type="button">Add Task</button>
-          </div>
-        </div>
+        
+        <Add onAdd={addTodo} placeholder="Add a new task" type="Task" />  
       </div>
 
       <TodoListDisplay
