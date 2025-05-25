@@ -10,11 +10,13 @@ export default function Posts() {
   const { userId } = useParams();
   const navigate = useNavigate();
 
-  const [allPosts, setAllPosts] = useState([]); // שמירת כל הפוסטים
   const [posts, setPosts] = useState([]);
+  const [cachePosts, setCachePosts] = useState([]); // חדש
 
   const [searchBy, setSearchBy] = useState('title');
   const [searchQuery, setSearchQuery] = useState('');
+  const [searchParams, setSearchParams] = useState(null);
+
   const [selectedPost, setSelectedPost] = useState(null);
   const [editingPost, setEditingPost] = useState(null);
   const [newTitle, setNewTitle] = useState('');
@@ -26,38 +28,17 @@ export default function Posts() {
       return;
     }
 
-    const fetchPosts = async () => {
-      try {
-        const res = await axios.get(`http://localhost:3000/posts?userId=${userId}`);
+    axios
+      .get(`http://localhost:3000/posts?userId=${userId}`)
+      .then((res) => {
         setPosts(res.data);
-        setAllPosts(res.data);
-      } catch (err) {
+        setCachePosts(res.data); // חדש
+      })
+      .catch((err) => {
         console.error('Failed to load posts:', err);
         alert('Error loading posts');
-      }
-    };
-
-    fetchPosts();
+      });
   }, [userId]);
-
-  const handleSearch = () => {
-    if (!searchQuery.trim()) return;
-
-    const filtered = allPosts.filter((post) => {
-      if (searchBy === 'id') {
-        return String(post.id).includes(searchQuery.trim());
-      }
-      return post[searchBy]?.toLowerCase().includes(searchQuery.trim().toLowerCase());
-    });
-
-    setPosts(filtered);
-  };
-
-  const handleClear = () => {
-    setSearchQuery('');
-    setSearchBy('title');
-    setPosts(allPosts);
-  };
 
   const addPost = async () => {
     if (!newTitle.trim() || !newBody.trim()) return;
@@ -68,26 +49,24 @@ export default function Posts() {
       body: newBody.trim(),
     });
 
-    setAllPosts((prev) => [...prev, newPost]);
     setPosts((prev) => [...prev, newPost]);
+    setCachePosts((prev) => [...prev, newPost]); // חדש
     setNewTitle('');
     setNewBody('');
   };
 
   const deletePost = async (id) => {
     await remove('posts', id);
-    setAllPosts((prev) => prev.filter((post) => post.id !== id));
     setPosts((prev) => prev.filter((post) => post.id !== id));
+    setCachePosts((prev) => prev.filter((post) => post.id !== id)); // חדש
     if (selectedPost?.id === id) setSelectedPost(null);
   };
 
   const updatePost = async (id, updatedData) => {
-    setAllPosts((prev) =>
-      prev.map((post) => (post.id === id ? { ...post, ...updatedData } : post))
-    );
-    setPosts((prev) =>
-      prev.map((post) => (post.id === id ? { ...post, ...updatedData } : post))
-    );
+    setPosts((prev) => prev.map((post) =>
+      post.id === id ? { ...post, ...updatedData } : post));
+    setCachePosts((prev) => prev.map((post) =>
+      post.id === id ? { ...post, ...updatedData } : post)); // חדש
     await update('posts', id, updatedData);
   };
 
@@ -103,9 +82,9 @@ export default function Posts() {
         setSearchBy={setSearchBy}
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
-        searchParams={null}
-        onSearch={handleSearch}
-        onClear={handleClear}
+        searchParams={searchParams}
+        setSearchParams={setSearchParams}
+        cachedData={cachePosts}
       />
 
       <div className={styles.addContainer}>

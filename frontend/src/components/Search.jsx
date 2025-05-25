@@ -5,7 +5,13 @@ import styles from '../css/Components/Search.module.css';
 import ClearButton from './buttons/Clear';
 
 export default function Search(props) {
-  const { resource, setResults, userId, searchBy, setSearchBy, searchQuery, setSearchQuery, searchParams, setSearchParams, cachedData } = props;
+  const {
+    resource, setResults, userId,
+    searchBy, setSearchBy,
+    searchQuery, setSearchQuery,
+    searchParams, setSearchParams,
+    cachedData
+  } = props;
 
   useEffect(() => {
     if (!searchParams?.query?.trim()) return;
@@ -15,14 +21,13 @@ export default function Search(props) {
 
     if (resource === 'todos' && searchParams.by === 'completed') {
       query += `&completed=true`;
-      query += `&title=${searchParams.query}`;
+      query += `&title_like=${searchParams.query}`;
     } else if (searchParams.by === 'id') {
       query += `&id=${searchParams.query}`;
     } else {
-      query += `&${searchParams.by}=${searchParams.query}`;
+      query += `&${searchParams.by}_like=${searchParams.query}`;
     }
-    
-    console.log(baseUrl + query);
+
     axios
       .get(baseUrl + query)
       .then((res) => setResults(res.data))
@@ -69,7 +74,6 @@ export default function Search(props) {
         Search
       </button>
 
-
       <ClearButton onClear={handleClearClick} />
     </div>
   );
@@ -87,6 +91,6 @@ Search.propTypes = {
     query: PropTypes.string,
     by: PropTypes.string
   }).isRequired,
-  setSearchParams: PropTypes.func.isRequired,     
-  cachedData: PropTypes.array.isRequired          
+  setSearchParams: PropTypes.func.isRequired,
+  cachedData: PropTypes.array.isRequired
 };

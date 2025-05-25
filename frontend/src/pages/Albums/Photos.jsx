@@ -12,27 +12,34 @@ export default function Photos() {
   const [photos, setPhotos] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
+  const [photoCache, setPhotoCache] = useState({});
 
-  const [newTitle, setNewTitle] = useState("");
-  const [newUrl, setNewUrl] = useState("");
-
+  const [newTitle, setNewTitle] = useState('');
+  const [newUrl, setNewUrl] = useState('');
   const [selectedPhoto, setSelectedPhoto] = useState(null);
 
   const PHOTOS_PER_PAGE = 5;
 
   useEffect(() => {
+    if (photoCache[currentPage]) {
+      setPhotos(photoCache[currentPage]);
+      setHasMore(photoCache[currentPage].length === PHOTOS_PER_PAGE);
+      return;
+    }
+
     const url = `http://localhost:3000/photos?albumId=${albumId}&_page=${currentPage}&_limit=${PHOTOS_PER_PAGE}`;
     axios
       .get(url)
       .then((res) => {
         setPhotos(res.data);
         setHasMore(res.data.length === PHOTOS_PER_PAGE);
+        setPhotoCache((prev) => ({ ...prev, [currentPage]: res.data }));
       })
       .catch((err) => {
         console.error('Failed to load photos:', err);
         alert('Error loading photos');
       });
-  }, [albumId, currentPage]);
+  }, [albumId, currentPage, photoCache]);
 
   const handleNext = () => {
     if (hasMore) setCurrentPage((prev) => prev + 1);
@@ -53,19 +60,37 @@ export default function Photos() {
     });
 
     setPhotos((prev) => [...prev, newPhoto]);
-    setNewTitle("");
-    setNewUrl("");
+    setPhotoCache((prev) => ({
+      ...prev,
+      [currentPage]: [...(prev[currentPage] || []), newPhoto]
+    }));
+
+    setNewTitle('');
+    setNewUrl('');
   };
 
   const deletePhoto = async (id) => {
     await remove("photos", id);
-    setPhotos((prev) => prev.filter((photo) => photo.id !== id));
+    const updatedPhotos = photos.filter((photo) => photo.id !== id);
+    setPhotos(updatedPhotos);
+
+    setPhotoCache((prev) => ({
+      ...prev,
+      [currentPage]: prev[currentPage]?.filter((photo) => photo.id !== id) || []
+    }));
   };
 
   const updatePhoto = async (id, updatedData) => {
-    setPhotos((prev) =>
-      prev.map((photo) => (photo.id === id ? { ...photo, ...updatedData } : photo))
+    const updatedList = photos.map((photo) =>
+      photo.id === id ? { ...photo, ...updatedData } : photo
     );
+
+    setPhotos(updatedList);
+    setPhotoCache((prev) => ({
+      ...prev,
+      [currentPage]: updatedList
+    }));
+
     await update("photos", id, updatedData);
   };
 
