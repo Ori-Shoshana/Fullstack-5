@@ -1,11 +1,11 @@
-// PhotoPopup.jsx
 import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import styles from "../../css/Todos/TodoPopup.module.css"; 
 import Save from "../../components/buttons/Save";
 import Cancel from "../../components/buttons/Cancel";
+import Delete from "../../components/buttons/Delete"; // ✅ הוספנו
 
-export default function PhotoPopup({ photo, onClose, onSave }) {
+export default function PhotoPopup({ photo, onClose, onSave, onDelete }) {
   const [title, setTitle] = useState("");
   const [url, setUrl] = useState("");
 
@@ -35,6 +35,10 @@ export default function PhotoPopup({ photo, onClose, onSave }) {
     onClose();
   };
 
+  const handleDelete = () => {
+      onDelete(photo.id);
+  };
+
   return (
     <div className={styles.popup}>
       <div className={styles["popup-content"]}>
@@ -53,6 +57,7 @@ export default function PhotoPopup({ photo, onClose, onSave }) {
         />
         <Save onClick={handleSave} />
         <Cancel onClick={onClose} />
+        {onDelete && <Delete onClick={handleDelete} />} 
       </div>
     </div>
   );
@@ -62,4 +67,5 @@ PhotoPopup.propTypes = {
   photo: PropTypes.object,
   onClose: PropTypes.func.isRequired,
   onSave: PropTypes.func.isRequired,
+  onDelete: PropTypes.func, 
 };

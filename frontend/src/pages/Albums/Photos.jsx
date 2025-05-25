@@ -69,29 +69,63 @@ export default function Photos() {
     setNewUrl('');
   };
 
-  const deletePhoto = async (id) => {
-    await remove("photos", id);
-    const updatedPhotos = photos.filter((photo) => photo.id !== id);
-    setPhotos(updatedPhotos);
+const deletePhoto = async (id) => {
+  // Delete the photo from the server
+  await remove("photos", id);
 
+  // Re-fetch the current page from the server (in case the photo was on it)
+  const res1 = await axios.get(
+    `http://localhost:3000/photos?albumId=${albumId}&_page=${currentPage}&_limit=${PHOTOS_PER_PAGE}`
+  );
+  let currentPhotos = res1.data;
+
+  // If the current page has less than PHOTOS_PER_PAGE photos after deletion
+  // try to pull photos from the next page to fill it
+  if (currentPhotos.length < PHOTOS_PER_PAGE) {
+    const res2 = await axios.get(
+      `http://localhost:3000/photos?albumId=${albumId}&_page=${currentPage + 1}&_limit=${PHOTOS_PER_PAGE}`
+    );
+    let nextPagePhotos = res2.data;
+
+    // Move photos from the next page to the current page until full or next page is empty
+    while (currentPhotos.length < PHOTOS_PER_PAGE && nextPagePhotos.length > 0) {
+      currentPhotos.push(nextPagePhotos.shift());
+    }
+
+    // Update the photo cache for both pages
     setPhotoCache((prev) => ({
       ...prev,
-      [currentPage]: prev[currentPage]?.filter((photo) => photo.id !== id) || []
+      [currentPage]: currentPhotos,
+      [currentPage + 1]: nextPagePhotos,
     }));
-  };
+
+    // Update hasMore based on whether there are any photos left in the next page
+    setHasMore(nextPagePhotos.length > 0);
+  } else {
+    // If the current page is still full, just update the cache normally
+    setPhotoCache((prev) => ({
+      ...prev,
+      [currentPage]: currentPhotos,
+    }));
+    setHasMore(true);
+  }
+
+  // Update the UI
+  setPhotos(currentPhotos);
+  setSelectedPhoto(null);
+};
+
+
 
   const updatePhoto = async (id, updatedData) => {
     const updatedList = photos.map((photo) =>
       photo.id === id ? { ...photo, ...updatedData } : photo
     );
-
     setPhotos(updatedList);
     setPhotoCache((prev) => ({
       ...prev,
       [currentPage]: updatedList
     }));
-
-    await update("photos", id, updatedData);
   };
 
   return (
@@ -115,16 +149,6 @@ export default function Photos() {
               className={styles.image}
             />
             <p className={styles.caption}>{photo.title}</p>
-            <button
-              className={styles.deleteButton}
-              onClick={(e) => {
-                e.stopPropagation();
-                deletePhoto(photo.id);
-              }}
-              title="Delete photo"
-            >
-              🗑️
-            </button>
           </div>
         ))}
       </div>
@@ -163,6 +187,7 @@ export default function Photos() {
         photo={selectedPhoto}
         onClose={() => setSelectedPhoto(null)}
         onSave={updatePhoto}
+        onDelete={deletePhoto}
       />
     </div>
   );

@@ -53,7 +53,7 @@ export default function Comments() {
 
   return (
     <div className={styles.wrapper}>
-      <button onClick={() => navigate(`/users/${userId}/posts`)} className={styles.backButton}>
+      <button onClick={() => navigate(`/home/users/${userId}/posts`)} className={styles.backButton}>
         ← Back to Post
       </button>
 

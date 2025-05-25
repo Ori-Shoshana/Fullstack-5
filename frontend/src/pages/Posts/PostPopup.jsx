@@ -3,8 +3,9 @@ import PropTypes from "prop-types";
 import styles from "../../css/Todos/TodoPopup.module.css";
 import Save from "../../components/buttons/Save";
 import Cancel from "../../components/buttons/Cancel";
+import Delete from "../../components/buttons/Delete";
 
-export default function PostPopup({ post, onClose, onSave }) {
+export default function PostPopup({ post, onClose, onSave, onDelete }) {
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
 
@@ -35,6 +36,12 @@ export default function PostPopup({ post, onClose, onSave }) {
     onClose();
   };
 
+  const handleDelete = () => {
+    if (window.confirm("Are you sure you want to delete this post?")) {
+      onDelete(post.id);
+    }
+  };
+
   return (
     <div className={styles.popup}>
       <div className={styles["popup-content"]}>
@@ -52,6 +59,7 @@ export default function PostPopup({ post, onClose, onSave }) {
         />
         <Save onClick={handleSave} />
         <Cancel onClick={onClose} />
+        {onDelete && post.id && <Delete onClick={handleDelete} />}
       </div>
     </div>
   );
@@ -61,4 +69,5 @@ PostPopup.propTypes = {
   post: PropTypes.object,
   onClose: PropTypes.func.isRequired,
   onSave: PropTypes.func.isRequired,
+  onDelete: PropTypes.func,
 };

@@ -5,22 +5,20 @@ import Search from '../../components/Search';
 import { create, remove, update } from '../../api/crudService';
 import styles from '../../css/Posts.module.css';
 import PostPopup from './PostPopup';
+import PostInfoPopup from './PostInfoPopup';
 
 export default function Posts() {
   const { userId } = useParams();
   const navigate = useNavigate();
 
   const [posts, setPosts] = useState([]);
-  const [cachePosts, setCachePosts] = useState([]); // חדש
-
+  const [cachePosts, setCachePosts] = useState([]);
   const [searchBy, setSearchBy] = useState('title');
   const [searchQuery, setSearchQuery] = useState('');
   const [searchParams, setSearchParams] = useState(null);
 
-  const [selectedPost, setSelectedPost] = useState(null);
   const [editingPost, setEditingPost] = useState(null);
-  const [newTitle, setNewTitle] = useState('');
-  const [newBody, setNewBody] = useState('');
+  const [viewingPost, setViewingPost] = useState(null);
 
   useEffect(() => {
     if (!userId) {
@@ -32,7 +30,7 @@ export default function Posts() {
       .get(`http://localhost:3000/posts?userId=${userId}`)
       .then((res) => {
         setPosts(res.data);
-        setCachePosts(res.data); // חדש
+        setCachePosts(res.data);
       })
       .catch((err) => {
         console.error('Failed to load posts:', err);
@@ -40,34 +38,29 @@ export default function Posts() {
       });
   }, [userId]);
 
-  const addPost = async () => {
-    if (!newTitle.trim() || !newBody.trim()) return;
+  const savePost = async (idOrNull, data) => {
+    if (!data.title.trim() || !data.body.trim()) return;
 
-    const newPost = await create('posts', {
-      userId: parseInt(userId),
-      title: newTitle.trim(),
-      body: newBody.trim(),
-    });
+    if (idOrNull) {
+      // Update existing post
+      await update('posts', idOrNull, data);
+      setPosts((prev) => prev.map((p) => (p.id === idOrNull ? { ...p, ...data } : p)));
+      setCachePosts((prev) => prev.map((p) => (p.id === idOrNull ? { ...p, ...data } : p)));
+    } else {
+      // Create new post
+      const newPost = await create('posts', { ...data, userId: parseInt(userId) });
+      setPosts((prev) => [...prev, newPost]);
+      setCachePosts((prev) => [...prev, newPost]);
+    }
 
-    setPosts((prev) => [...prev, newPost]);
-    setCachePosts((prev) => [...prev, newPost]); // חדש
-    setNewTitle('');
-    setNewBody('');
+    setEditingPost(null);
   };
 
   const deletePost = async (id) => {
     await remove('posts', id);
     setPosts((prev) => prev.filter((post) => post.id !== id));
-    setCachePosts((prev) => prev.filter((post) => post.id !== id)); // חדש
-    if (selectedPost?.id === id) setSelectedPost(null);
-  };
-
-  const updatePost = async (id, updatedData) => {
-    setPosts((prev) => prev.map((post) =>
-      post.id === id ? { ...post, ...updatedData } : post));
-    setCachePosts((prev) => prev.map((post) =>
-      post.id === id ? { ...post, ...updatedData } : post)); // חדש
-    await update('posts', id, updatedData);
+    setCachePosts((prev) => prev.filter((post) => post.id !== id));
+    setEditingPost(null);
   };
 
   return (
@@ -87,25 +80,7 @@ export default function Posts() {
         cachedData={cachePosts}
       />
 
-      <div className={styles.addContainer}>
-        <input
-          className={styles.input}
-          type="text"
-          placeholder="Post title"
-          value={newTitle}
-          onChange={(e) => setNewTitle(e.target.value)}
-        />
-        <textarea
-          className={styles.input}
-          placeholder="Post body"
-          value={newBody}
-          onChange={(e) => setNewBody(e.target.value)}
-        />
-        <button className={styles.addButton} onClick={addPost}>
-          Add Post
-        </button>
-      </div>
-
+      {/* רשימת הפוסטים */}
       <ul className={styles.list}>
         {posts.map((post) => (
           <li
@@ -117,29 +92,37 @@ export default function Posts() {
               <strong>Post #{post.id}</strong> – {post.title}
             </div>
             <div>
-              <button onClick={() => setSelectedPost(post)}>View</button>
-              <button onClick={() => deletePost(post.id)} title="Delete Post">
-                🗑️
+              <button onClick={() => setViewingPost(post)} title="View Info">
+                ℹ️
               </button>
             </div>
           </li>
         ))}
       </ul>
 
-      {selectedPost && (
-        <div className={styles.selected}>
-          <h3>{selectedPost.title}</h3>
-          <p>{selectedPost.body}</p>
-          <button onClick={() => navigate(`${selectedPost.id}/comments`)}>
-            Show Comments
-          </button>
-        </div>
-      )}
+      {/* כפתור ➕ */}
+      <button
+        className={styles.fab}
+        title="Add new post"
+        onClick={() => setEditingPost({ title: '', body: '', userId })}
+      >
+        ＋
+      </button>
 
       <PostPopup
         post={editingPost}
         onClose={() => setEditingPost(null)}
-        onSave={updatePost}
+        onSave={savePost}
+        onDelete={deletePost}
+      />
+
+      <PostInfoPopup
+        post={viewingPost}
+        onClose={() => setViewingPost(null)}
+        onShowComments={() => {
+          setViewingPost(null);
+          navigate(`/home/users/${userId}/posts/${viewingPost.id}/comments`);
+        }}
       />
     </div>
   );
