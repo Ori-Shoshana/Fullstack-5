@@ -27,8 +27,7 @@ export default function Search(props) {
     } else {
       query += `&${searchParams.by}_like=${searchParams.query}`;
     }
-
-    axios
+    
     search(resource, query)
       .then((data) => setResults(data))
       .catch((err) => console.error('Search error:', err));
