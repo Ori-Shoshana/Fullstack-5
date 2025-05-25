@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import axios from 'axios';
 import styles from '../css/Components/Search.module.css';
 import ClearButton from './buttons/Clear';
+import { search } from '../api/crudService';
 
 export default function Search(props) {
   const {
@@ -16,7 +17,6 @@ export default function Search(props) {
   useEffect(() => {
     if (!searchParams?.query?.trim()) return;
 
-    const baseUrl = `http://localhost:3000/${resource}`;
     let query = `?userId=${userId}`;
 
     if (resource === 'todos' && searchParams.by === 'completed') {
@@ -29,8 +29,8 @@ export default function Search(props) {
     }
 
     axios
-      .get(baseUrl + query)
-      .then((res) => setResults(res.data))
+    search(resource, query)
+      .then((data) => setResults(data))
       .catch((err) => console.error('Search error:', err));
   }, [searchParams, resource, userId, setResults]);
 
