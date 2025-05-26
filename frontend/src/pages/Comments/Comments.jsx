@@ -9,7 +9,6 @@ import BackButton from '../../components/buttons/BackButton';
 
 export default function Comments() {
   const { userId, postId } = useParams();
-  const navigate = useNavigate();
 
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState("");
