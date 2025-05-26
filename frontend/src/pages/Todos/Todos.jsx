@@ -79,7 +79,7 @@ export default function Todos() {
     const updater = (todo) =>
       todo.id === id ? { ...todo, title: newTitle } : todo;
 
-    update("todos", id, { title: newTitle }); // fire and forget
+    update("todos", id, { userId: user.id, completed: false, title: newTitle }); // fire and forget
 
     setTodos((prev) => prev.map(updater));
     setCacheTodos((prev) => prev.map(updater));

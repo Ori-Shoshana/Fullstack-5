@@ -1,6 +1,6 @@
 // Photos.jsx
 import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { create, remove, update, getByPage } from '../../api/crudService';
 import PhotoPopup from './PhotoPopup';
 import PhotoGrid from './PhotoGrid';
@@ -14,7 +14,6 @@ const globalPhotoCache = {}; // shared across navigations
 
 export default function Photos() {
   const { albumId, userId } = useParams();
-  const navigate = useNavigate();
 
   const [photos, setPhotos] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -66,33 +65,40 @@ export default function Photos() {
 
   const addPhoto = async () => {
     if (!newTitle.trim() || !newUrl.trim()) return;
-
+    
+    console.log("8");
     await create("photos", {
       albumId: parseInt(albumId),
       title: newTitle.trim(),
       url: newUrl.trim(),
       thumbnailUrl: newUrl.trim()
     });
-
+    console.log("9");
     const albumCache = globalPhotoCache[albumId];
-
-    if (albumCache && Object.keys(albumCache).length > 0) {
+    console.log(albumCache);
+    if (!albumCache || Object.keys(albumCache).length === 0) {
+      console.log(" Album was empty, loading first page");
+      const refreshed = await getByPage('photos', 'albumId', albumId, 1, PHOTOS_PER_PAGE);
+      globalPhotoCache[albumId] = refreshed;
+      setPhotos(refreshed);
+      setCurrentPage(1);  
+      setHasMore(refreshed.length === PHOTOS_PER_PAGE);
+    } else {
       const lastPage = Math.max(...Object.keys(albumCache).map(Number));
       delete albumCache[lastPage];
-      console.log(`✅ Cleared album ${albumId}, page ${lastPage} from cache.`);
+      console.log(` Cleared album ${albumId}, page ${lastPage} from cache.`);
+  
       if (currentPage === lastPage) {
         const refreshed = await getByPage('photos', 'albumId', albumId, currentPage, PHOTOS_PER_PAGE);
         setPhotos(refreshed);
         globalPhotoCache[albumId][currentPage] = refreshed;
         setHasMore(refreshed.length === PHOTOS_PER_PAGE);
       }
-    } else {
-      console.log(`ℹ️ No pages in cache for album ${albumId}, nothing to clear.`);
     }
+  
     setNewTitle('');
     setNewUrl('');
   };
-
 
   const deletePhoto = async (id) => {
     await remove("photos", id);
@@ -136,13 +142,15 @@ export default function Photos() {
       <h2 className={styles.title}>Photos from Album {albumId}</h2>
 
       <PhotoGrid photos={photos} onSelect={setSelectedPhoto} />
-      <AddPhotoForm
-        title={newTitle}
-        url={newUrl}
-        setTitle={setNewTitle}
-        setUrl={setNewUrl}
-        onAdd={addPhoto}
-      />
+      {!selectedPhoto && (
+        <AddPhotoForm
+          title={newTitle}
+          url={newUrl}
+          setTitle={setNewTitle}
+          setUrl={setNewUrl}
+          onAdd={addPhoto}
+        />
+      )}
       <PhotoPagination
         page={currentPage}
         hasMore={hasMore}

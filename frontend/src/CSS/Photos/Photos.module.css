@@ -117,7 +117,7 @@
   flex-wrap: wrap;
   justify-content: center;
   gap: 1rem;
-  margin-bottom: 3rem; /* ✅ מרווח מתחת להוספה */
+  margin-bottom: 3rem; 
 }
 
 .paginationWrapper {

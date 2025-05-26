@@ -31,9 +31,9 @@ export default function Search(props) {
     if (searchParams.by === 'id') {
       query += `&id=${searchParams.query}`;
     } else if(searchParams.by === 'title'){
-      query += `&$title_like=${searchParams.query}`;
+      query += `&title_like=${searchParams.query}`;
     }
-    
+
     search(resource, query)
       .then((data) => setResults(data))
       .catch((err) => console.error('Search error:', err));
