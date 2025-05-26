@@ -67,23 +67,32 @@ export default function Photos() {
   const addPhoto = async () => {
     if (!newTitle.trim() || !newUrl.trim()) return;
 
-    const newPhoto = await create("photos", {
+    await create("photos", {
       albumId: parseInt(albumId),
       title: newTitle.trim(),
       url: newUrl.trim(),
       thumbnailUrl: newUrl.trim()
     });
 
-    const newPhotos = [...photos, newPhoto];
-    setPhotos(newPhotos);
+    const albumCache = globalPhotoCache[albumId];
 
-    // update global cache
-    if (!globalPhotoCache[albumId]) globalPhotoCache[albumId] = {};
-    globalPhotoCache[albumId][currentPage] = newPhotos;
-
+    if (albumCache && Object.keys(albumCache).length > 0) {
+      const lastPage = Math.max(...Object.keys(albumCache).map(Number));
+      delete albumCache[lastPage];
+      console.log(`✅ Cleared album ${albumId}, page ${lastPage} from cache.`);
+      if (currentPage === lastPage) {
+        const refreshed = await getByPage('photos', 'albumId', albumId, currentPage, PHOTOS_PER_PAGE);
+        setPhotos(refreshed);
+        globalPhotoCache[albumId][currentPage] = refreshed;
+        setHasMore(refreshed.length === PHOTOS_PER_PAGE);
+      }
+    } else {
+      console.log(`ℹ️ No pages in cache for album ${albumId}, nothing to clear.`);
+    }
     setNewTitle('');
     setNewUrl('');
   };
+
 
   const deletePhoto = async (id) => {
     await remove("photos", id);
