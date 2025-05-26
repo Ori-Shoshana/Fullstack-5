@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import styles from '../../css/Components/Clear.module.css';
+import styles from '../../css/Components/Buttons/Clear.module.css';
 
 export default function ClearButton({ onClear }) {
   return (

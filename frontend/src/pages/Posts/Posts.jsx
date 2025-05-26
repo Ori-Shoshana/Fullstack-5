@@ -6,7 +6,8 @@ import styles from '../../css/Posts/Posts.module.css';
 import PostPopup from './PostPopup';
 import PostInfoPopup from './PostInfoPopup';
 import PostList from './PostList';
-import BackButton from '../../components/BackButton';
+import BackButton from '../../components/buttons/BackButton';
+import FloatingActionButton from '../../components/buttons/FloatingActionButton';
 
 export default function Posts() {
   const { userId } = useParams();
@@ -90,14 +91,11 @@ export default function Posts() {
         onView={setViewingPost}
       />
 
-      <button
-        className={styles.fab}
+      <FloatingActionButton
         title="Add new post"
         onClick={() => setEditingPost({ title: '', body: '', userId })}
-      >
-        ＋
-      </button>
-
+      />
+            
       <PostPopup
         post={editingPost}
         onClose={() => setEditingPost(null)}

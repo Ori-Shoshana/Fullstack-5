@@ -1,6 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
-import styles from "../../css/Components/Buttons.module.css";
+import styles from "../../css/Components/Buttons/Buttons.module.css";
 
 export default function Save(prop) {
 const { onClick } = prop;

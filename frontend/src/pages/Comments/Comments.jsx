@@ -5,7 +5,7 @@ import styles from '../../css/Comments/Comments.module.css';
 import CommentPopup from './CommentPopup';
 import CommentList from './CommentsList';
 import AddCommentForm from './AddCommentForm';
-import BackButton from '../../components/BackButton';
+import BackButton from '../../components/buttons/BackButton';
 
 export default function Comments() {
   const { userId, postId } = useParams();

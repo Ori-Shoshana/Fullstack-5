@@ -5,7 +5,7 @@ import { create, getAll } from '../../api/crudService';
 import styles from '../../css/Albums/Albums.module.css';
 import Add from '../../components/Add';
 import AlbumList from './AlbumList';
-import BackButton from '../../components/BackButton';
+import BackButton from '../../components/buttons/BackButton';
 
 
 export default function Albums() {

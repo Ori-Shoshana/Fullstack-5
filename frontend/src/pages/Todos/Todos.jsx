@@ -6,7 +6,7 @@ import Search from "../../components/Search";
 import { getAll, create, update, remove } from "../../api/crudService";
 import Sort from "../../components/Sort";
 import Add from "../../components/Add";
-import BackButton from '../../components/BackButton';
+import BackButton from '../../components/buttons/BackButton';
 
 export default function Todos() {
   const user = JSON.parse(localStorage.getItem('activeUser'));

@@ -1,0 +1,13 @@
+.fab {
+    position: relative;
+    display: block;
+    margin: 60px auto 0 auto; /* 60px top padding, center horizontally */
+    width: 60px;
+    height: 60px;
+    font-size: 22px;
+    border: none;
+    cursor: pointer;
+  }
+  
+  
+  

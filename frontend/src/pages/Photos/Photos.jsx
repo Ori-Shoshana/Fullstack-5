@@ -7,7 +7,7 @@ import PhotoGrid from './PhotoGrid';
 import AddPhotoForm from './AddPhotoForm';
 import PhotoPagination from './PhotoPagination';
 import styles from '../../css/Photos/Photos.module.css';
-import BackButton from '../../components/BackButton';
+import BackButton from '../../components/buttons/BackButton';
 
 
 const globalPhotoCache = {}; // shared across navigations

@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import styles from '../css/BackButton.module.css';
+import styles from '../../css/Components/Buttons/BackButton.module.css';
 
 export default function BackButton({ to, label = 'Back' }) {
   const navigate = useNavigate();
