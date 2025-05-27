@@ -12,23 +12,33 @@
 }
 
 .navButtons {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 20px;
   justify-content: center;
-  flex-wrap: wrap;
-  gap: 15px;
 }
 
-.navButtons button {
-  padding: 12px 24px;
-  font-size: 16px;
+.navButton {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
   background-color: #007bff;
-  border: none;
-  border-radius: 6px;
   color: white;
+  border: none;
+  border-radius: 12px;
   cursor: pointer;
-  transition: background-color 0.25s ease;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+  text-align: center;
 }
 
-.navButtons button:hover {
+.navButton:hover {
   background-color: #0056b3;
+  transform: scale(1.05);
+}
+
+.buttonImage {
+  width: 60px;
+  height: 60px;
+  margin-bottom: 10px;
 }
