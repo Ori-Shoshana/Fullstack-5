@@ -4,16 +4,24 @@ import PropTypes from "prop-types";
 
 const MainPage = (props) => {
     const { user, navigate, handleLogout, toggleInfo } = props;
+        const buttons = [
+        { label: "Info", onClick: toggleInfo, img: "/images/info.png" },
+        { label: "Todos", onClick: () => navigate(`users/${user.id}/todos`), img: "/images/todos.png" },
+        { label: "Posts", onClick: () => navigate(`users/${user.id}/posts`), img: "/images/posts.png" },
+        { label: "Albums", onClick: () => navigate(`users/${user.id}/albums`), img: "/images/albums.png" },
+        { label: "Logout", onClick: handleLogout, img: "/images/logout.png" },
+    ];
     return (
         <div className={styles.container}>
             <h1 className={styles.welcome}>Welcome, {user.name}</h1>
 
             <div className={styles.navButtons}>
-                <button onClick={toggleInfo}>Info</button>
-                <button onClick={() => navigate(`users/${user.id}/todos`)}>Todos</button>
-                <button onClick={() => navigate(`users/${user.id}/posts`)}>Posts</button>
-                <button onClick={() => navigate(`users/${user.id}/albums`)}>Albums</button>
-                <button onClick={handleLogout}>Logout</button>
+                {buttons.map((btn, index) => (
+                    <button key={index} onClick={btn.onClick} className={styles.navButton}>
+                        <img src={btn.img} alt={btn.label} className={styles.buttonImage} />
+                        <span>{btn.label}</span>
+                    </button>
+                ))}
             </div>
         </div>
     );
