@@ -18,6 +18,7 @@ export default function Posts() {
   const [searchBy, setSearchBy] = useState('title');
   const [searchQuery, setSearchQuery] = useState('');
   const [searchParams, setSearchParams] = useState(null);
+  const [formError, setFormError] = useState('');
 
   const [editingPost, setEditingPost] = useState(null);
   const [viewingPost, setViewingPost] = useState(null);
@@ -43,7 +44,12 @@ export default function Posts() {
   }, [userId]);
 
   const savePost = async (idOrNull, data) => {
-    if (!data.title.trim() || !data.body.trim()) return;
+    if (!data.title.trim() || !data.body.trim()) {
+      setFormError("Please fill in both title and body.");
+      return;
+    }
+
+    setFormError("");
 
     if (idOrNull) {
       // Update existing post
@@ -95,14 +101,18 @@ export default function Posts() {
         title="Add new post"
         onClick={() => setEditingPost({ title: '', body: '', userId })}
       />
-            
+
       <PostPopup
         post={editingPost}
-        onClose={() => setEditingPost(null)}
+        onClose={() => {
+          setFormError('');
+          setEditingPost(null);
+        }}
         onSave={savePost}
         onDelete={deletePost}
+        error={formError}
       />
-
+      
       <PostInfoPopup
         post={viewingPost}
         onClose={() => setViewingPost(null)}

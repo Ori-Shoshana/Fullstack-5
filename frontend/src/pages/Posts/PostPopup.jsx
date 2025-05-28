@@ -5,7 +5,7 @@ import Save from "../../components/buttons/Save";
 import Cancel from "../../components/buttons/Cancel";
 import Delete from "../../components/buttons/Delete";
 
-export default function PostPopup({ post, onClose, onSave, onDelete }) {
+export default function PostPopup({ post, onClose, onSave, onDelete, error }) {
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
 
@@ -22,18 +22,12 @@ export default function PostPopup({ post, onClose, onSave, onDelete }) {
     const trimmedTitle = title.trim();
     const trimmedBody = body.trim();
 
-    if (
-      trimmedTitle &&
-      trimmedBody &&
-      (trimmedTitle !== post.title || trimmedBody !== post.body)
-    ) {
-      onSave(post.id, {
-        title: trimmedTitle,
-        body: trimmedBody,
-        userId: post.userId,
-      });
-    }
-    onClose();
+    onSave(post.id, {
+      title: trimmedTitle,
+      body: trimmedBody,
+      userId: post.userId,
+    });
+
   };
 
   const handleDelete = () => {
@@ -46,6 +40,9 @@ export default function PostPopup({ post, onClose, onSave, onDelete }) {
     <div className={styles.popup}>
       <div className={styles["popup-content"]}>
         <h2>Edit Post</h2>
+
+        {error && <div className={styles.error}>{error}</div>}
+
         <input
           className={styles.input}
           type="text"
@@ -60,6 +57,7 @@ export default function PostPopup({ post, onClose, onSave, onDelete }) {
           value={body}
           onChange={(e) => setBody(e.target.value)}
         />
+
         <Save onClick={handleSave} />
         <Cancel onClick={onClose} />
         {onDelete && post.id && <Delete onClick={handleDelete} />}
@@ -73,4 +71,5 @@ PostPopup.propTypes = {
   onClose: PropTypes.func.isRequired,
   onSave: PropTypes.func.isRequired,
   onDelete: PropTypes.func,
+  error: PropTypes.string,
 };
