@@ -1,4 +1,3 @@
-// Photos.jsx
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { create, remove, update, getByPage } from '../../api/crudService';
@@ -9,8 +8,7 @@ import PhotoPagination from './PhotoPagination';
 import styles from '../../css/Photos/Photos.module.css';
 import BackButton from '../../components/buttons/BackButton';
 
-
-const globalPhotoCache = {}; // shared across navigations
+const globalPhotoCache = {};
 
 export default function Photos() {
   const { albumId, userId } = useParams();
@@ -18,6 +16,7 @@ export default function Photos() {
   const [photos, setPhotos] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
+  const [isAlbumEmpty, setIsAlbumEmpty] = useState(false);
 
   const [newTitle, setNewTitle] = useState('');
   const [newUrl, setNewUrl] = useState('');
@@ -25,34 +24,31 @@ export default function Photos() {
 
   const PHOTOS_PER_PAGE = 5;
 
+  const loadPhotos = async (page) => {
+    try {
+      const data = await getByPage('photos', 'albumId', albumId, page, PHOTOS_PER_PAGE);
+      if (!globalPhotoCache[albumId]) globalPhotoCache[albumId] = {};
+      globalPhotoCache[albumId][page] = data;
+      setPhotos(data);
+      setHasMore(data.length === PHOTOS_PER_PAGE);
+      setIsAlbumEmpty(data.length === 0 && page === 1);
+    } catch (err) {
+      console.error('Failed to load photos:', err);
+      alert('Error loading photos');
+    }
+  };
+
   useEffect(() => {
-    // Initialize album cache if not already
-    if (!globalPhotoCache[albumId]) {
-      globalPhotoCache[albumId] = {};
-    }
-
-    const cachedPage = globalPhotoCache[albumId][currentPage];
-    if (cachedPage) {
+    if (globalPhotoCache[albumId]?.[currentPage]) {
       console.log("from cache");
-      setPhotos(cachedPage);
-      setHasMore(cachedPage.length === PHOTOS_PER_PAGE);
-      return;
+      const cached = globalPhotoCache[albumId][currentPage];
+      setPhotos(cached);
+      setHasMore(cached.length === PHOTOS_PER_PAGE);
+      setIsAlbumEmpty(cached.length === 0 && currentPage === 1);
+    } else {
+      console.log("fetching");
+      loadPhotos(currentPage);
     }
-
-    const loadPhotos = async () => {
-      try {
-        console.log("fetching");
-        const data = await getByPage('photos', 'albumId', albumId, currentPage, PHOTOS_PER_PAGE);
-        setPhotos(data);
-        setHasMore(data.length === PHOTOS_PER_PAGE);
-        globalPhotoCache[albumId][currentPage] = data;
-      } catch (err) {
-        console.error('Failed to load photos:', err);
-        alert('Error loading photos');
-      }
-    };
-
-    loadPhotos();
   }, [albumId, currentPage]);
 
   const handleNext = () => {
@@ -65,98 +61,152 @@ export default function Photos() {
 
   const addPhoto = async () => {
     if (!newTitle.trim() || !newUrl.trim()) return;
-    
-    console.log("8");
-    await create("photos", {
-      albumId: parseInt(albumId),
-      title: newTitle.trim(),
-      url: newUrl.trim(),
-      thumbnailUrl: newUrl.trim()
-    });
-    console.log("9");
-    const albumCache = globalPhotoCache[albumId];
-    console.log(albumCache);
-    if (!albumCache || Object.keys(albumCache).length === 0) {
-      console.log(" Album was empty, loading first page");
-      const refreshed = await getByPage('photos', 'albumId', albumId, 1, PHOTOS_PER_PAGE);
-      globalPhotoCache[albumId] = refreshed;
-      setPhotos(refreshed);
-      setCurrentPage(1);  
-      setHasMore(refreshed.length === PHOTOS_PER_PAGE);
-    } else {
-      const lastPage = Math.max(...Object.keys(albumCache).map(Number));
-      delete albumCache[lastPage];
-      console.log(` Cleared album ${albumId}, page ${lastPage} from cache.`);
   
-      if (currentPage === lastPage) {
-        const refreshed = await getByPage('photos', 'albumId', albumId, currentPage, PHOTOS_PER_PAGE);
-        setPhotos(refreshed);
-        globalPhotoCache[albumId][currentPage] = refreshed;
-        setHasMore(refreshed.length === PHOTOS_PER_PAGE);
-      }
+    try {
+      const newPhoto = await create("photos", {
+        albumId: parseInt(albumId),
+        title: newTitle.trim(),
+        url: newUrl.trim(),
+        thumbnailUrl: newUrl.trim()
+      });
+  
+      if (!globalPhotoCache[albumId]) globalPhotoCache[albumId] = {};
+      const albumCache = globalPhotoCache[albumId];
+  
+      const cachedPages = Object.keys(albumCache).map(Number);
+      const lastCachedPage = cachedPages.length > 0 ? Math.max(...cachedPages) : 1;
+      const lastPagePhotos = albumCache[lastCachedPage] || [];
+  
+      const canAddToCurrentPage = lastPagePhotos.length < PHOTOS_PER_PAGE;
+  
+      if (canAddToCurrentPage) {
+        const updatedPhotos = [...lastPagePhotos, newPhoto];
+        globalPhotoCache[albumId][lastCachedPage] = updatedPhotos;
+        setCurrentPage(lastCachedPage);
+        setPhotos(updatedPhotos);
+        setHasMore(updatedPhotos.length === PHOTOS_PER_PAGE);
+      } 
+
+      setIsAlbumEmpty(false);
+      setNewTitle('');
+      setNewUrl('');
+    } catch (err) {
+      console.error("Error adding photo:", err);
+      alert("Failed to add photo.");
     }
-  
-    setNewTitle('');
-    setNewUrl('');
   };
+  
+  
 
   const deletePhoto = async (id) => {
-    await remove("photos", id);
-    const res1 = await getByPage("photos", "albumId", albumId, currentPage, PHOTOS_PER_PAGE);
-    let currentPhotos = res1;
-
-    if (currentPhotos.length < PHOTOS_PER_PAGE) {
-      const res2 = await getByPage("photos", "albumId", albumId, currentPage + 1, PHOTOS_PER_PAGE);
-      let nextPagePhotos = res2;
-
-      while (currentPhotos.length < PHOTOS_PER_PAGE && nextPagePhotos.length > 0) {
-        currentPhotos.push(nextPagePhotos.shift());
+    try {
+      await remove("photos", id);
+  
+      // Invalidate cached pages from currentPage onward
+      if (globalPhotoCache[albumId]) {
+        const albumCache = globalPhotoCache[albumId];
+        const totalPages = Object.keys(albumCache).length;
+  
+        for (let page = currentPage; page <= totalPages; page++) {
+          delete albumCache[page];
+        }
       }
-
-      globalPhotoCache[albumId][currentPage] = currentPhotos;
-      globalPhotoCache[albumId][currentPage + 1] = nextPagePhotos;
-      setHasMore(nextPagePhotos.length > 0);
-    } else {
-      globalPhotoCache[albumId][currentPage] = currentPhotos;
-      setHasMore(true);
+  
+      // Try to re-fetch the current page
+      const data = await getByPage('photos', 'albumId', albumId, currentPage, PHOTOS_PER_PAGE);
+  
+      if (data.length > 0) {
+        setPhotos(data);
+        setHasMore(data.length === PHOTOS_PER_PAGE);
+        setIsAlbumEmpty(false);
+        setSelectedPhoto(null);
+  
+        // Update cache
+        if (!globalPhotoCache[albumId]) globalPhotoCache[albumId] = {};
+        globalPhotoCache[albumId][currentPage] = data;
+      } else if (currentPage > 1) {
+        // Go back one page if current became empty
+        const previousPage = currentPage - 1;
+        const prevData = await getByPage('photos', 'albumId', albumId, previousPage, PHOTOS_PER_PAGE);
+  
+        setCurrentPage(previousPage);
+        setPhotos(prevData);
+        setHasMore(prevData.length === PHOTOS_PER_PAGE);
+        setIsAlbumEmpty(prevData.length === 0);
+        setSelectedPhoto(null);
+  
+        // Update cache
+        if (!globalPhotoCache[albumId]) globalPhotoCache[albumId] = {};
+        globalPhotoCache[albumId][previousPage] = prevData;
+      } else {
+        // Album is now empty
+        setPhotos([]);
+        setHasMore(false);
+        setIsAlbumEmpty(true);
+        setSelectedPhoto(null);
+      }
+  
+    } catch (err) {
+      console.error("Error removing photo:", err);
+      alert("Failed to remove photo.");
     }
-
-    setPhotos(currentPhotos);
-    setSelectedPhoto(null);
   };
+  
+  
+
+  
+  
 
   const updatePhoto = async (id, updatedData) => {
     const updatedList = photos.map((photo) =>
       photo.id === id ? { ...photo, ...updatedData } : photo
     );
-    setPhotos(updatedList);
-    globalPhotoCache[albumId][currentPage] = updatedList;
+    
 
-    await update("photos", id, updatedData);
+    try{
+      await update("photos", id, updatedData);
+
+      setPhotos(updatedList);
+      if (globalPhotoCache[albumId]) {
+        globalPhotoCache[albumId][currentPage] = updatedList;
+      }
+    } catch(err){
+      console.error("Error removing photo:", err);
+      alert("Failed to update photo.");
+    }
   };
 
   return (
     <div className={styles.wrapper}>
       <BackButton to={`/home/users/${userId}/albums`} label="Back to Albums" />
-
       <h2 className={styles.title}>Photos from Album {albumId}</h2>
 
-      <PhotoGrid photos={photos} onSelect={setSelectedPhoto} />
-      {!selectedPhoto && (
-        <AddPhotoForm
-          title={newTitle}
-          url={newUrl}
-          setTitle={setNewTitle}
-          setUrl={setNewUrl}
-          onAdd={addPhoto}
-        />
+      {isAlbumEmpty && (
+        <p className={styles.emptyMessage}>This album has no photos yet.</p>
       )}
-      <PhotoPagination
-        page={currentPage}
-        hasMore={hasMore}
-        onPrev={handlePrev}
-        onNext={handleNext}
-      />
+      <>
+          <PhotoGrid photos={photos} onSelect={setSelectedPhoto} />
+          
+          <AddPhotoForm
+              title={newTitle}
+              url={newUrl}
+              setTitle={setNewTitle}
+              setUrl={setNewUrl}
+              onAdd={addPhoto}
+          />
+          
+          {!isAlbumEmpty && 
+          <PhotoPagination
+              page={currentPage}
+              onPrev={handlePrev}
+              onNext={handleNext}
+              disablePrev={currentPage === 1}
+              disableNext={!hasMore}
+          />
+          }
+
+        </>
+      
 
       <PhotoPopup
         photo={selectedPhoto}
@@ -166,5 +216,4 @@ export default function Photos() {
       />
     </div>
   );
-
-}
+  }
