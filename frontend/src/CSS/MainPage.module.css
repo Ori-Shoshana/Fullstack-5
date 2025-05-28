@@ -1,47 +1,49 @@
-.container {
-  padding: 40px;
-  max-width: 800px;
-  margin: auto;
-  text-align: center;
-}
+  .container {
+    padding: 40px;
+    max-width: 1000px;
+    margin: auto;
+    text-align: center;
+  }
 
-.welcome {
-  font-size: 28px;
-  margin-bottom: 30px;
-  color: #333;
-}
+  .welcome {
+    font-size: 28px;
+    margin-bottom: 30px;
+    color: #333;
+  }
 
-.navButtons {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-  gap: 20px;
+  .navButtons {
+  display: flex;
   justify-content: center;
+  flex-wrap: wrap;
+  gap: 20px;
 }
 
 .navButton {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 20px;
+  width: 140px;
+  height: 160px;
   background-color: #007bff;
   color: white;
   border: none;
-  border-radius: 12px;
+  border-radius: 16px;
   cursor: pointer;
-  transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   text-align: center;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* הצל הבסיסי */
+  transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 .navButton:hover {
   background-color: #0056b3;
   transform: scale(1.05);
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3); /* צל מודגש יותר בהובר */
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
 }
 
-
 .buttonImage {
-  width: 60px;
-  height: 60px;
-  margin-bottom: 10px;
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+  margin-bottom: 8px;
 }
