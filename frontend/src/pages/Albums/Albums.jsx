@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Search from '../../components/Search';
-import { create, getAll } from '../../api/crudService';
+import { create, getAll, remove } from '../../api/crudService';
 import styles from '../../css/Albums/Albums.module.css';
 import Add from '../../components/Add';
 import AlbumList from './AlbumList';
@@ -53,6 +53,19 @@ export default function Albums() {
     setNewTitle('');
   };
 
+  const handleDeleteAlbum = async (id) => {
+    if (!window.confirm('Are you sure you want to delete this album?')) return;
+  
+    try {
+      await remove('albums', id);
+      setAlbums((prev) => prev.filter((album) => album.id !== id));
+      setCacheAlbums((prev) => prev.filter((album) => album.id !== id));
+    } catch (err) {
+      console.error('Failed to delete album:', err);
+      alert('Error deleting album');
+    }
+  };
+
   return (
     <div className={styles.wrapper}>
       <BackButton to="/home" label="Back to Home" />
@@ -74,7 +87,7 @@ export default function Albums() {
 
         <Add onAdd={addAlbum} placeholder="New album title" type="Album" title={newTitle} setTitle={setNewTitle} />
       </div>
-      <AlbumList albums={albums} />
+      <AlbumList albums={albums} onDelete={handleDeleteAlbum}/>
     </div>
   );
 }

@@ -1260,31 +1260,6 @@
       "userId": 2,
       "id": 20,
       "title": "voluptas rerum iure ut enim"
-    },
-    {
-      "id": 747,
-      "userId": 1,
-      "title": "vacation photos"
-    },
-    {
-      "id": 523,
-      "userId": 1,
-      "title": "album 74"
-    },
-    {
-      "id": 5675,
-      "userId": 1,
-      "title": "new album"
-    },
-    {
-      "userId": 1,
-      "title": "5",
-      "id": 5676
-    },
-    {
-      "userId": 1,
-      "title": "test",
-      "id": 5677
     }
   ],
   "photos": [
@@ -8054,13 +8029,6 @@
       "title": "summer",
       "url": "https://th.bing.com/th/id/R.20824a86cb0753862c1ac5a594f40815?rik=U6ztyaXfRMCKkA&riu=http%3a%2f%2ffullhdwall.com%2fwp-content%2fuploads%2f2020%2f03%2fSea-Summer-Image-1620x1080.jpg&ehk=rGq2AE%2fontIf0q4WtFA2wQKIKHF%2bZ21pPDV37jsQc5s%3d&risl=&pid=ImgRaw&r=0",
       "thumbnailUrl": "https://th.bing.com/th/id/R.20824a86cb0753862c1ac5a594f40815?rik=U6ztyaXfRMCKkA&riu=http%3a%2f%2ffullhdwall.com%2fwp-content%2fuploads%2f2020%2f03%2fSea-Summer-Image-1620x1080.jpg&ehk=rGq2AE%2fontIf0q4WtFA2wQKIKHF%2bZ21pPDV37jsQc5s%3d&risl=&pid=ImgRaw&r=0"
-    },
-    {
-      "albumId": 5675,
-      "title": "b",
-      "url": "https://t4.ftcdn.net/jpg/08/09/09/83/360_F_809098361_z45jKPDGsYymmTJcFQvp3VGTPgGuY35L.jpg",
-      "thumbnailUrl": "https://t4.ftcdn.net/jpg/08/09/09/83/360_F_809098361_z45jKPDGsYymmTJcFQvp3VGTPgGuY35L.jpg",
-      "id": 8204
     },
     {
       "albumId": 8,

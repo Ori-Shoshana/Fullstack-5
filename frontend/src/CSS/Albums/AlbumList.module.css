@@ -1,0 +1,64 @@
+.cardList {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    justify-content: center;
+    padding: 1rem;
+    width: 100%;
+  }
+  
+  .cardItem {
+    position: relative;
+    list-style: none;
+  }
+  
+  .cardWrapper {
+    position: relative;
+    width: 250px;
+    transition: transform 0.2s ease;
+  }
+  
+  .cardWrapper:hover {
+    transform: translateY(-4px);
+  }
+  
+  .card {
+    padding: 1.25rem 1rem;
+    border-radius: 1rem;
+    background: linear-gradient(145deg, #ffffff, #f1f1f1);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
+    cursor: pointer;
+    transition: box-shadow 0.3s ease;
+  }
+  
+  .card:hover {
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.12);
+  }
+  
+  .card h3 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.1rem;
+    color: #333;
+  }
+  
+  .card p {
+    margin: 0;
+    font-size: 0.95rem;
+    color: #666;
+  }
+  
+  .deleteWrapper {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    display: none;
+    z-index: 5;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  
+  .cardWrapper:hover .deleteWrapper {
+    display: block;
+    opacity: 1;
+  }
+  
