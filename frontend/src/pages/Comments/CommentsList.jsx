@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styles from '../../css/Comments/Comments.module.css';
+import DeleteBin from '../../components/buttons/DeleteBin';
 
 export default function CommentList({ comments, currentUser, onEdit, onDelete }) {
   if (comments.length === 0) {
@@ -22,13 +23,7 @@ export default function CommentList({ comments, currentUser, onEdit, onDelete })
                 >
                   ✏️
                 </button>
-                <button
-                  onClick={() => onDelete(comment.id)}
-                  className={styles.deleteButton}
-                  title="Delete comment"
-                >
-                  🗑️
-                </button>
+                <DeleteBin onClick={() => onDelete(comment.id)} title="Delete comment" />
               </div>
             )}
           </div>

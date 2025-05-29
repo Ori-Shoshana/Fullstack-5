@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
 import styles from '../../css/Albums/AlbumList.module.css';
-import Delete from '../../components/buttons/Delete';
+import DeleteBin from '../../components/buttons/DeleteBin';
 
 export default function AlbumList(props) {
   const { albums, onDelete }  = props;
@@ -26,7 +26,7 @@ export default function AlbumList(props) {
               <p>{album.title}</p>
             </div>
             <div className={styles.deleteWrapper}>
-              <Delete onClick={(e) => {
+              <DeleteBin onClick={(e) => {
                 e.stopPropagation(); // Prevent navigation when clicking Delete
                 onDelete(album.id);
               }} />
